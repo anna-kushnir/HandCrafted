@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin: Додати категорію</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/admin/category.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/admin/categories}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/categories}" th:object="${category}" method="POST" class="category-form-container">
+        <div class="category-info">
+            <label for="name" class="category-info-label">Назва категорії:</label>
+            <input
+                    th:field="*{name}"
+                    type="text"
+                    class="text-box"
+                    id="name"
+                    placeholder="Назва категорії"
+                    minlength="3"
+                    maxlength="30"
+                    required />
+
+            <label for="description" class="category-info-label">Опис:</label>
+            <textarea
+                    th:field="*{description}"
+                    class="text-box"
+                    id="description"
+                    placeholder="Короткий опис"
+                    minlength="5"
+                    maxlength="255"
+                    required>
+            </textarea>
+        </div>
+
+        <div class="options-container">
+            <a th:href="@{/admin/categories}">
+                <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        id="cancel_btn">
+                    Скасувати
+                </button>
+            </a>
+            <button
+                    type="submit"
+                    class="btn btn-outline-primary"
+                    id="add_category_btn">
+                Додати
+            </button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

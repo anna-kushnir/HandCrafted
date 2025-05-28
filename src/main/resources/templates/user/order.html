@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Огляд замовлення</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/order.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/orders}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: user-menu"></a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="order-card">
+            <p class="text" th:text="'Номер замовлення: ' +${order.id}"></p>
+            <p class="text" th:text="'Вартість: ' +${order.price} +'₴'"></p>
+            <p class="text" th:text="'Тип отримання замовлення: ' +${order.typeOfReceipt.getName()}"></p>
+            <p class="text" th:text="'Дата й час створення замовлення: ' +${order.formationDate}"></p>
+            <p th:if="${!order.orderComments.isEmpty()}"
+               class="text"
+               th:text="'Ваші коментарі до замовлення: ' +${order.orderComments}">
+            </p>
+            <p class="text" th:switch="${order.status.getId()}">Статус:
+                <span th:case="1" style="color: #a80b0b;" class="text" th:text="${order.status.getName()}"></span>
+                <span th:case="2" style="color: #d95319;" class="text" th:text="${order.status.getName()}"></span>
+                <span th:case="3" style="color: #b6921c;" class="text" th:text="${order.status.getName()}"></span>
+                <span th:case="4" style="color: #3b9616;" class="text" th:text="${order.status.getName()}"></span>
+            </p>
+            <p th:if="${order.typeOfReceipt.getId() == 1}"
+               class="text"
+               th:text="'Дата й час отримання замовлення: ' +${order.receiptDate != null ? order.receiptDate : 'Ще не погоджено'}">
+            </p>
+            <p th:if="${order.typeOfReceipt.getId() == 2}"
+               class="text"
+               th:text="'Поштове відділення: ' +${order.deliveryAddress.region} +' область, '
+          +${order.deliveryAddress.city} +', ' +${order.deliveryAddress.postAddress}">
+            </p>
+            <p th:if="${order.typeOfReceipt.getId() == 2 && order.status.getId() >= 3}"
+               class="text"
+               th:text="'Номер накладної: ' +${order.invoiceNumber}">
+            </p>
+        </div>
+
+        <div th:if="${order.status.getId() == 1}" class="order-options">
+            <button class="btn btn-outline-danger cancel-order-btn" th:id="${order.id}">
+                Скасувати замовлення
+            </button>
+        </div>
+
+        <div class="order-products-listing">
+            <p class="label">Замовлені товари:</p>
+
+            <div class="product-listing">
+                <div th:each="item : ${orderItems}" class="product-card">
+                    <div th:if="${!item.giftSet and !item.photos.isEmpty()}" class="product-img-container">
+                        <img
+                                th:src="'data:image/jpeg;base64,' + ${item.photos.get(0)}"
+                                class="product-img"
+                                alt="фото товару" />
+                    </div>
+
+                    <div th:if="${item.giftSet and !item.photos.isEmpty()}" class="gift-set-img-container">
+                        <img
+                                th:each="photo : ${item.photos}"
+                                th:src="'data:image/jpeg;base64,' + ${photo}"
+                                class="gift-set-img"
+                                alt="фото товару в подарунковому наборі" />
+                    </div>
+
+                    <div class="product-info-container">
+                        <p th:text="${item.name}"></p>
+                        <p th:text="'Ціна: ' +${item.cost} +'₴'"></p>
+                        <p th:text="'Кількість: ' + ${item.quantityInOrder}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="/js/user/order.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Шаблон</title>
+</head>
+<body>
+<div class="container">
+    <header th:fragment="header" class="page-header">
+        <div class="logo-container">
+            <p class="logo-header">HandCrafted</p>
+            <p class="logo-text">Місце, де ви знайдете саме те, що так довго шукали</p>
+        </div>
+
+        <div class="contact-dropdown">
+            <button class="btn btn-outline-primary" id="contact_btn" onclick="openContacts()">Контакти</button>
+            <ul class="contact-list" id="contact_list" style="display: none;">
+                <li th:each="contact : ${shopContacts}"
+                    th:text="${contact.name.getName() + ': ' + (contact.value != null ? contact.value : 'не вказано')}">
+                </li>
+            </ul>
+        </div>
+        <script type="text/javascript" th:src="@{/js/shop_contacts.js}"></script>
+    </header>
+
+    <main>
+        <a th:fragment="user-menu" th:href="@{/menu}">
+            <button class="menu-btn">
+                <img
+                        id="menu_icon"
+                        src="/icons/menu_icon1.png"
+                        width="30px"
+                        height="30px"
+                        alt="кнопка відкриття меню" />
+                <p>Меню</p>
+            </button>
+        </a>
+
+        <a th:fragment="admin-menu" th:href="@{/admin/menu}">
+            <button class="menu-btn">
+                <img
+                        id="admin_menu_icon"
+                        src="/icons/menu_icon1.png"
+                        width="30px"
+                        height="30px"
+                        alt="кнопка відкриття меню" />
+                <p>Меню</p>
+            </button>
+        </a>
+    </main>
+</div>
+</body>
+</html>

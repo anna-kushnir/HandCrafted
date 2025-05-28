@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin: Замовлення</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/list_of_orders.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/admin/orders}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+    </div>
+
+    <div th:if="${message}" role="alert" th:text="${message}" class="alert"></div>
+    <div th:unless="${message}"></div>
+
+    <div class="main">
+        <div th:unless="${orders.isEmpty()}" class="order-listing">
+            <div th:each="order : ${orders}">
+                <a th:href="@{/admin/orders/__${status_name}__/__${order.id}__}">
+                    <div class="order-card">
+                        <p class="text" th:text="'Номер замовлення: ' +${order.id}"></p>
+                        <p class="text" th:text="'Користувач: ' +${order.user.name} +' ' +${order.user.surname}"></p>
+                        <p class="text" th:text="'Вартість: ' +${order.price} +'₴'"></p>
+                        <p class="text" th:text="'Тип отримання замовлення: ' +${order.typeOfReceipt.getName()}"></p>
+                        <p class="text" th:text="'Дата й час створення замовлення: ' +${order.formationDate}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${orders.isEmpty()}" class="empty-msg">Замовлень немає</div>
+    </div>
+</main>
+</body>
+</html>

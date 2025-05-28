@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin: Меню огляду замовлень</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/auth_and_menu.css" />
+    <link rel="stylesheet" href="/css/pages/menu.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+
+    <style>
+        .btn {
+            min-width: 330px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header th:insert="layout :: header"></header>
+
+    <main class="main-container">
+        <div class="product-container">
+            <a th:each="status : ${statuses}" th:href="@{/admin/orders/{status_name}(status_name=${status.toString().toLowerCase()})}">
+                <button class="btn btn-outline-primary" th:text="${status.getName()}">
+                </button>
+            </a>
+        </div>
+
+        <div class="profile-container">
+            <a th:href="@{/admin/orders/all/find}">
+                <button class="btn btn-outline-secondary">
+                    Знайти замовлення
+                </button>
+            </a>
+            <a th:href="@{/admin/menu}">
+                <button class="btn btn-outline-secondary">
+                    Повернутися в головне меню
+                </button>
+            </a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

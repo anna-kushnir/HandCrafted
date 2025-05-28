@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Кошик</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/guest/cart.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body id="body">
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:insert="layout :: user-menu"></a>
+        </div>
+    </div>
+
+    <div th:if="${isAuthenticated}" class="main">
+        <div th:unless="${cartItems.isEmpty()}" class="product-listing">
+            <div th:each="cartItem : ${cartItems}" class="product-card">
+                <div class="product-img-and-info-container">
+                    <div th:if="${!cartItem.giftSet and !cartItem.photos.isEmpty()}" class="product-img-container">
+                        <a th:href="@{/products/{id}(id=${cartItem.productId})}">
+                            <img
+                                    th:src="'data:image/jpeg;base64,' + ${cartItem.photos.get(0)}"
+                                    class="product-img"
+                                    alt="фото товару" />
+                        </a>
+                    </div>
+
+                    <div th:if="${cartItem.giftSet and !cartItem.photos.isEmpty()}" class="gift-set-img-container">
+                        <img
+                                th:each="photo : ${cartItem.photos}"
+                                th:src="'data:image/jpeg;base64,' + ${photo}"
+                                class="gift-set-img"
+                                alt="фото товару в подарунковому наборі" />
+                    </div>
+
+                    <div class="product-info-container">
+                        <p th:text="${cartItem.name}"></p>
+                        <p th:text="'Ціна: ' +${cartItem.cost} +'₴'"></p>
+                        <!-- TODO CHECK: для подарункових наборів кількість змінювати не можна -->
+                        <div th:unless="${cartItem.giftSet}" class="quantity-container">
+                            <p>Кількість:</p>
+                            <input
+                                    type="number"
+                                    th:id="${cartItem.productId}"
+                                    class="text-box quantity-input"
+                                    min="1"
+                                    th:max="${cartItem.productQuantity}"
+                                    th:value="${cartItem.quantityInCart}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-options-container">
+                    <button th:unless="${cartItem.isGiftSet()}" class="btn btn-outline-secondary remove-btn" th:id="'product' + ${cartItem.productId}">Видалити</button>
+                    <button th:if="${cartItem.isGiftSet()}" class="btn btn-outline-secondary remove-btn" th:id="'giftset' + ${cartItem.giftSetId}">Видалити</button>
+<!--                    TODO CHECK: подарунковий набір не можна додати у вподобане -->
+                    <button th:unless="${cartItem.isGiftSet()}" class="btn btn-outline-secondary transfer-to-fav-btn" th:id="${cartItem.productId}">Перенести у вподобане</button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${cartItems.isEmpty()}" class="empty-msg">Кошик порожній</div>
+
+        <div th:unless="${cartItems.isEmpty()}" class="cart-price-and-options-container">
+            <div class="total-price-container">
+                <p>Загальна вартість:</p>
+                <p th:text="${totalPrice} +'₴'"></p>
+            </div>
+            <div>
+                <a th:href="@{/orders/new}">
+                    <button type="button" class="btn btn-outline-primary" id="create_order_btn">
+                        Здійснити замовлення
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:unless="${isAuthenticated}" class="main">
+        <div class="product-listing" style="display: none"></div>
+
+        <div class="empty-msg" style="display: none">Кошик порожній</div>
+
+        <div class="cart-price-and-options-container" style="display: none">
+            <div class="total-price-container">
+                <p>Загальна вартість:</p>
+                <p></p>
+            </div>
+            <div>
+                <div class="create-order-msg-container">
+                    <p class="create-order-msg label">Щоб здійснити замовлення, вам потрібно спочатку</p>
+                    <a th:href="@{/register}" class="create-order-msg label">зареєструватися</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:inline="javascript">const isAuthenticated = [[${isAuthenticated}]];</script>
+<script type="text/javascript" th:src="@{/js/guest/cart.js}"></script>
+</body>
+</html>

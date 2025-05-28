@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Вподобане</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/user/favorite_products.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body id="body">
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:insert="layout :: user-menu"></a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div th:unless="${favoriteProducts.isEmpty()}" class="product-listing">
+            <div th:each="product : ${favoriteProducts}">
+                <a th:href="@{/products/{id}(id=${product.productId})}">
+                    <div class="product-card">
+                        <div class="product-img-container">
+                            <img
+                                    th:src="'data:image/jpeg;base64,' + ${product.photo}"
+                                    class="product-img"
+                                    alt="фото товару" />
+                            <p th:unless="${product.inStock}" class="product-not-in-stock">
+                                Не в наявності
+                            </p>
+                        </div>
+                        <p th:text="${product.productName}" class="product-name"></p>
+                        <div th:unless="${product.withDiscount}" class="product-price-container">
+                            <p th:text="${product.price} +'₴'" class="product-price"></p>
+                        </div>
+                        <div th:if="${product.withDiscount}" class="product-price-container">
+                            <s><p th:text="${product.price} +'₴'" class="product-price"></p></s>
+                            <p
+                                    th:text="${product.discountedPrice} +'₴'"
+                                    class="product-price discounted-price">
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${favoriteProducts.isEmpty()}" class="empty-msg">Вподобаних товарів ще немає</div>
+
+<!--        TODO: реалізувати створення подарункових наборів -->
+        <div th:unless="${favoriteProducts.isEmpty()}" class="create-gift-set-container">
+            <button class="btn btn-outline-primary" id="create_gift_set_btn">
+                Створити подарунковий набір
+            </button>
+        </div>
+    </div>
+</main>
+</body>
+</html>

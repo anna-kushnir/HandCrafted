@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>HandCrafted: Огляд товару</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/guest/product.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/products}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: user-menu"></a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="product-container">
+            <div class="product-info-left">
+                <div class="product-photo-container" th:unless="${product.photos.isEmpty()}">
+                    <img
+                            src="/icons/back_icon1.png"
+                            class="photo-nav-arrow left-arrow"
+                            onclick="prevPhoto(this)"
+                            alt="←"/>
+                    <img
+                            th:src="'data:image/jpeg;base64,' + ${product.photos.get(0)}"
+                            class="product-photo gallery-photo"
+                            alt="фото товару"
+                            th:data-photos="${product.photos}"
+                            th:data-index="0"
+                            th:data-product-id="${product.id}" />
+                    <img
+                            src="/icons/back_icon1.png"
+                            class="photo-nav-arrow right-arrow"
+                            onclick="nextPhoto(this)"
+                            alt="→"/>
+                </div>
+
+                <div class="product-photo-container" th:if="${product.photos.isEmpty()}">
+                    <img
+                            src="/icons/image.png"
+                            class="product-photo"
+                            alt="фото товару" />
+                </div>
+
+                <div class="product-price-and-options-container">
+                    <div th:unless="${product.withDiscount}" class="product-price-container">
+                        <p>Ціна:</p>
+                        <p th:text="${product.price} +'₴'"></p>
+                    </div>
+                    <div th:if="${product.withDiscount}" class="product-price-container">
+                        <p>Ціна:</p>
+                        <s><p th:text="${product.price} +'₴'"></p></s>
+                        <p
+                                th:text="${product.discountedPrice} +'₴'"
+                                class="discounted-price">
+                        </p>
+                    </div>
+
+                    <div class="product-options">
+                        <form th:action="@{/products/{id}/addToFavorites(id=${product.id})}" th:method="POST">
+                            <button class="menu-btn" id="add_to_favorite_btn">
+                                <img
+                                        id="favorite_icon"
+                                        src="/icons/heart1.png"
+                                        width="30px"
+                                        height="30px"
+                                        alt="кнопка додавання товару до вподобаного" />
+                            </button>
+                        </form>
+                        <form th:action="@{/products/{id}/addToCart(id=${product.id})}" th:method="POST">
+                            <button type="submit" th:if="${product.inStock}" class="menu-btn" id="add_to_cart_btn">
+                                <img
+                                        id="cart_icon"
+                                        src="/icons/cart1.png"
+                                        width="30px"
+                                        height="30px"
+                                        alt="кнопка додавання товару до кошика" />
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:unless="${product.inStock}" class="product-not-in-stock">
+                    Не в наявності
+                </div>
+
+                <div th:if="${msgAddToCart}" role="alert" th:text="${msgAddToCart}" class="alert"></div>
+                <div th:if="${msgAddToFavorites}" role="alert" th:text="${msgAddToFavorites}" class="alert"></div>
+            </div>
+
+            <div class="product-info-right">
+                <p th:text="${product.name}" class="product-name"></p>
+
+                <p class="product-info-label">Опис:</p>
+                <p th:text="${product.description}" class="product-info-text"></p>
+
+                <p class="product-info-label">Кольори:</p>
+                <p th:unless="${product.colors.isEmpty()}" th:text="${product.colors}" class="product-info-text"></p>
+                <p th:if="${product.colors.isEmpty()}" class="product-info-text">Товар не позначено жодним кольором</p>
+
+                <p class="product-info-label">Ключові слова:</p>
+                <p th:text="${product.keyWords}" class="product-info-text"></p>
+            </div>
+        </div>
+
+        <div class="recommendations-container">
+            <p class="label">
+                Рекомендовані товари:
+            </p>
+            <div th:unless="${recommendedProducts.isEmpty()}" class="recommendations-listing">
+                <div th:each="product : ${recommendedProducts}">
+                    <a th:href="@{/products/{id}(id=${product.id})}">
+                        <div class="product-card">
+                            <div class="recommended-product-img-container">
+                                <img
+                                        th:if="${product.photos}"
+                                        th:src="'data:image/jpeg;base64,' + ${product.photos.get(0)}"
+                                        class="recommended-product-photo"
+                                        alt="фото товару" />
+                                <img
+                                        th:unless="${product.photos}"
+                                        src="/icons/image.png"
+                                        class="recommended-product-photo"
+                                        alt="фото товару" />
+                            </div>
+
+                            <div class="recommended-product-info">
+                                <p th:text="${product.name}" class="recommended-product-name"></p>
+                                <div th:unless="${product.withDiscount}" class="recommended-product-price-container">
+                                    <p th:text="${product.price} +'₴'" class="recommended-product-price"></p>
+                                </div>
+                                <div th:if="${product.withDiscount}" class="recommended-product-price-container">
+                                    <s><p th:text="${product.price} +'₴'" class="recommended-product-price"></p></s>
+                                    <p
+                                            th:text="${product.discountedPrice} +'₴'"
+                                            class="recommended-product-price discounted-price">
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${recommendedProducts.isEmpty()}" role="alert" class="alert">Рекомендованих товарів поки немає</div>
+        </div>
+    </div>
+</main>
+<script src="/js/guest/product.js"></script>
+<script src="/js/parse_photos.js"></script>
+</body>
+</html>

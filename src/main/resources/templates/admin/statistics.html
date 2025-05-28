@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin: Статистика</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/admin/statistics.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+    </div>
+
+    <div class="main">
+        <table th:unless="${categoryStatistics.isEmpty()}">
+            <caption>Найпопулярніші категорії</caption>
+            <thead>
+            <tr>
+                <th class="heading">Категорія</th>
+                <th class="heading">Кількість проданих товарів в категорії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="category : ${categoryStatistics}">
+                <th th:text="${category.getKey()}"></th>
+                <td th:text="${category.getValue()}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${categoryStatistics.isEmpty()}" class="label">
+            Статистика по категоріях відсутня
+        </div>
+
+        <table th:unless="${colorStatistics.isEmpty()}">
+            <caption>Найпопулярніші кольори товарів</caption>
+            <thead>
+            <tr>
+                <th class="heading">Колір</th>
+                <th class="heading">Кількість проданих товарів з кольором</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="color : ${colorStatistics}">
+                <th th:text="${color.getKey()}"></th>
+                <td th:text="${color.getValue()}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${colorStatistics.isEmpty()}" class="label">
+            Статистика за кольорами відсутня
+        </div>
+    </div>
+</main>
+</body>
+</html>

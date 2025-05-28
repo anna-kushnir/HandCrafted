@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Реєстрація</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/auth_and_menu.css" />
+    <link rel="stylesheet" href="/css/pages/guest/registration.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <header th:insert="layout :: header"></header>
+
+    <main>
+        <p th:if="${message}" th:text="${message}" class="error-msg"></p>
+
+        <form th:action="@{/register}" th:object="${user}" method="POST" class="form-container">
+            <div class="data-container">
+                <label for="name" class="label">Введіть ваше ім'я:</label>
+                <input
+                        th:value="${user.name}"
+                        name="name"
+                        type="text"
+                        class="text-box"
+                        id="name"
+                        placeholder="Ім'я"
+                        minlength="2"
+                        maxlength="20"
+                        required
+                        pattern="[A-Za-zА-ЩЮЯЄІЇа-щьюяєіїҐґʼ'\- ]{2,20}" />
+
+                <label for="surname" class="label">Введіть ваше прізвище:</label>
+                <input
+                        th:value="${user.surname}"
+                        name="surname"
+                        type="text"
+                        class="text-box"
+                        id="surname"
+                        placeholder="Прізвище"
+                        minlength="2"
+                        maxlength="20"
+                        required
+                        pattern="[A-Za-zА-ЩЮЯЄІЇа-щьюяєіїҐґʼ'\- ]{2,20}" />
+
+                <label for="user_name" class="label">Придумайте ім'я користувача:</label>
+                <input
+                        th:value="${user.userName}"
+                        name="userName"
+                        type="text"
+                        class="text-box"
+                        id="user_name"
+                        placeholder="user_name"
+                        minlength="8"
+                        maxlength="20"
+                        required />
+
+                <label for="password" class="label">Придумайте пароль:</label>
+                <input
+                        th:value="${user.password}"
+                        name="password"
+                        type="password"
+                        class="text-box"
+                        id="password"
+                        placeholder="password"
+                        minlength="6"
+                        maxlength="12"
+                        required />
+
+                <label for="submitPassword" class="label">Повторіть пароль:</label>
+                <input
+                        th:value="${user.submitPassword}"
+                        name="submitPassword"
+                        type="password"
+                        class="text-box"
+                        id="submitPassword"
+                        placeholder="password"
+                        minlength="6"
+                        maxlength="12"
+                        required />
+            </div>
+
+            <div class="btn-container">
+                <a th:href="@{/}">
+                    <button type="button" class="btn btn-outline-secondary" id="cancel_btn">Скасувати</button>
+                </a>
+                <button type="submit" name="submit" class="btn btn-outline-primary" id="sign_up_btn">Зареєструватися</button>
+            </div>
+        </form>
+
+        <div>
+            <p class="footer-text label">Вже маєте акаунт?</p>
+            <a th:href="@{/login}" class="footer-text label">Увійти</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

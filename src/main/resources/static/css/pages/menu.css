@@ -1,0 +1,30 @@
+/* ------- Main ------- */
+
+.main-container {
+    justify-content: space-between;
+    height: 65vh;
+    margin: auto;
+}
+
+.product-container,
+.profile-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+}
+
+/* ----- Buttons ----- */
+
+.btn {
+    width: 250px;
+    margin: 5px;
+}
+
+.btn-admin {
+    width: 350px;
+}
+
+.btn-user {
+    width: 350px;
+}

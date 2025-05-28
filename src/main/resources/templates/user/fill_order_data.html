@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Заповнення даних для замовлення</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/user/fill_order_data.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <form th:action="@{/orders/new}" th:object="${order}" method="POST" class="form-container">
+        <div class="data-container">
+            <label for="user_phone" class="label">Введіть ваш номер телефону для зв'язку:</label>
+            <input
+                    th:value="${order.userPhone}"
+                    name="userPhone"
+                    type="number"
+                    class="text-box"
+                    id="user_phone"
+                    placeholder="737770000"
+                    min="100000000"
+                    max="999999999"
+                    required />
+
+            <label for="order_comments" class="label">Коментар до замовлення:</label>
+            <textarea
+                    th:field="*{orderComments}"
+                    class="text-box"
+                    id="order_comments"
+                    placeholder="Ваші коментарі чи запитання до замовлення"
+                    maxlength="255"></textarea>
+
+            <label for="type_of_receipt" class="label">Оберіть тип отримання замовлення:</label>
+            <select
+                    class="text-box"
+                    id="type_of_receipt"
+                    name="typeOfReceipt"
+                    required
+                    onchange="  let type=getElementById('type_of_receipt')
+                                let d1=getElementById('pickup_info_container')
+                                let d2=getElementById('delivery_info_container')
+                                let i1=getElementById('region')
+                                let i2=getElementById('city')
+                                let i3=getElementById('post_address')
+                                if (type.selectedIndex === 1) {
+                                    d1.style.display='block'
+                                    d2.style.display='none'
+                                    i1.required=false
+                                    i2.required=false
+                                    i3.required=false
+                                }
+                                else {
+                                    d2.style.display='grid'
+                                    d1.style.display='none'
+                                    i1.required=true
+                                    i2.required=true
+                                    i3.required=true
+                                }">
+                <option value="" selected disabled hidden>Обрати</option>
+                <option
+                        th:each="type : ${typesOfReceipt}"
+                        th:text="${type.getName()}"
+                        th:value="${type.toString()}"
+                        class="type-option">
+                </option>
+            </select>
+
+            <div id="pickup_info_container" style="display: none">
+                <p class="pickup-message label">
+                    У цьому випадку адміністратор якнайшвидше зв'яжеться
+                    з вами для погодження дати й часу отримання замовлення
+                </p>
+            </div>
+
+            <div id="delivery_info_container" style="display: none">
+                <label for="region" class="label">Оберіть область:</label>
+                <input
+                        th:field="*{deliveryAddressRegion}"
+                        type="text"
+                        class="text-box"
+                        id="region"
+                        placeholder="Київська"
+                        maxlength="255"
+                        required />
+
+                <label for="city" class="label">Оберіть населений пункт:</label>
+                <input
+                        th:field="*{deliveryAddressCity}"
+                        type="text"
+                        class="text-box"
+                        id="city"
+                        placeholder="Київ"
+                        maxlength="255"
+                        required />
+
+                <label for="post_address" class="label">Оберіть відділення Нової пошти:</label>
+                <input
+                        th:field="*{deliveryAddressPostAddress}"
+                        type="text"
+                        class="text-box"
+                        id="post_address"
+                        placeholder="Нова пошта №2, вул. Шевченка, 1"
+                        maxlength="255"
+                        required />
+            </div>
+        </div>
+
+        <div class="options-container">
+            <a th:href="@{/cart}">
+                <button type="button" class="btn btn-outline-secondary" id="cancel_btn">
+                    Скасувати
+                </button>
+            </a>
+            <button type="submit" class="btn btn-outline-primary" id="order_btn">
+                Замовити
+            </button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

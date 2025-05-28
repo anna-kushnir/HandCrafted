@@ -1,0 +1,144 @@
+.main-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+}
+
+/* ------- Product list ------- */
+
+.product-listing {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+@media screen and (max-width: 1600px) {
+    .product-listing {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+@media screen and (max-width: 1210px) {
+    .product-listing {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media screen and (max-width: 830px) {
+    .product-listing {
+        grid-template-columns: 1fr;
+    }
+}
+@media screen and (max-width: 620px) {
+    .cart-price-and-options-container {
+        flex-direction: column;
+    }
+    .total-price-container > p {
+        margin: 10px auto auto;
+    }
+}
+
+/* ------- Product card ------- */
+
+.product-card {
+    font-size: 16px;
+    margin: 10px;
+}
+
+.product-img-and-info-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-img-container {
+    height: 150px;
+    display: flex;
+}
+.product-img {
+    align-self: center;
+    margin: 0;
+    width: 150px;
+    height: auto;
+    max-height: 150px;
+}
+
+/* TODO CHECK: Врахувати, що для подарункового набору показується не одне фото, а до чотирьох */
+
+.gift-set-img-container {
+    height: 150px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.gift-set-img {
+    align-self: center;
+    margin: 0;
+    width: 70px;
+    height: auto;
+    max-height: 70px;
+}
+
+.product-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: max-content;
+    margin-left: 5px;
+}
+
+.quantity-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.quantity-input {
+    width: 50px;
+}
+
+.product-options-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-outline-secondary {
+    font-size: 15px;
+    min-width: 100px;
+    width: max-content;
+}
+
+/* --------- Footer --------- */
+
+.cart-price-and-options-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid var(--main-border-color);
+}
+
+.total-price-container {
+    font-family: var(--text-font), sans-serif;
+    font-size: 20px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.create-order-msg-container {
+    margin: 10px;
+}
+
+.create-order-msg {
+    display: block;
+    text-align: right;
+    margin: 5px auto;
+}
+

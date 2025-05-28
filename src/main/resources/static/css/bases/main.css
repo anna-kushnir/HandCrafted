@@ -1,0 +1,132 @@
+body {
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.main-container {
+    margin-bottom: 40px;
+}
+
+/* ------- Logo ------- */
+
+.logo-container {
+    margin: 10px 3%;
+    justify-content: left;
+}
+
+.logo-header {
+    font-size: 15px;
+}
+@media (max-width: 768px) {
+    .logo-header {
+        margin: 0;
+        margin-right: 20px;
+    }
+}
+
+.logo-text {
+    font-size: 10px;
+}
+
+/* ------- Main ------- */
+
+.container {
+    min-height: 85vh;
+    height: 100%;
+}
+
+/* ----- Back & Menu Buttons ----- */
+
+.header {
+    border-bottom: 2px solid var(--main-border-color);
+}
+
+.header-menu-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 10px;
+}
+
+.menu-btn,
+.back-btn {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.menu-btn > p {
+    font-family: var(--text-font), sans-serif;
+    font-size: 16px;
+}
+
+.menu-btn:hover {
+    color: #c300ff;
+}
+.menu-btn:hover #menu_icon,
+.menu-btn:hover #admin_menu_icon {
+    content: url("../../icons/menu_icon2.png");
+}
+.back-btn:hover #back_icon {
+    content: url("../../icons/back_icon2.png");
+}
+
+.menu-btn:active {
+    color: #650085;
+}
+.menu-btn:active #menu_icon,
+.menu-btn:active #admin_menu_icon {
+    content: url("../../icons/menu_icon3.png");
+}
+.back-btn:active #back_icon {
+    content: url("../../icons/back_icon3.png");
+}
+
+/* ------- Messages ------- */
+
+.alert {
+    font-family: var(--text-font), sans-serif;
+    font-size: 16px;
+    text-align: center;
+    padding: 3px;
+    margin: 3px 0;
+    background-color: rgba(121, 168, 255, 0.42);
+    outline: 1px solid #0040a1;
+}
+
+.empty-msg {
+    font-family: var(--text-font), sans-serif;
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
+    margin: auto;
+}
+
+/* ----- Product listing ----- */
+
+.product-listing {
+    align-self: flex-start;
+    display: grid;
+    margin: 0 auto;
+}
+
+.product-card {
+    font-family: var(--text-font), sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+    padding: 10px;
+    height: min-content;
+    border: 1px solid #21003a;
+    border-radius: 2px;
+}
+
+.product-price-container {
+    display: flex;
+}
+
+.discounted-price {
+    color: red;
+}

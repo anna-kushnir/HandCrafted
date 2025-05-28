@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin: Редагувати товар</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/admin/product.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/admin/products}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+    </div>
+
+    <form onsubmit="submitEditProduct(event)" class="product-form-container">
+        <div class="product-info-top">
+            <div class="product-info-left">
+                <div id="photo_data" th:data-photos="${oldProduct.photos}" style="display: none"></div>
+
+                <div class="product-photo-options">
+                    <label for="photo" class="btn btn-outline-secondary">Додати фото</label>
+                    <input
+                            type="file"
+                            id="photo"
+                            name="photo"
+                            accept=".jpg, .jpeg, .png"
+                            class="photo-input"
+                            multiple />
+                </div>
+
+                <div class="photo-preview-container">
+                </div>
+            </div>
+
+            <div class="product-info-right">
+                <input
+                        th:value="${oldProduct.name}"
+                        id="name"
+                        type="text"
+                        class="text-box"
+                        placeholder="Назва товару"
+                        minlength="3"
+                        maxlength="25"
+                        required />
+
+                <label for="description" class="product-info-label">Опис:</label>
+                <textarea
+                        th:text="${oldProduct.description}"
+                        id="description"
+                        class="text-box"
+                        placeholder="Опис товару"
+                        minlength="5"
+                        maxlength="255"
+                        required>
+                </textarea>
+
+                <label for="colors" class="product-info-label">Кольори:</label>
+                <textarea
+                        th:text="${oldProduct.colors}"
+                        id="colors"
+                        class="text-box"
+                        placeholder="колір1, колір2, ..."
+                        minlength="3"
+                        maxlength="255"
+                        required>
+                </textarea>
+
+                <label for="key_words" class="product-info-label">Ключові слова:</label>
+                <textarea
+                        th:text="${oldProduct.keyWords}"
+                        id="key_words"
+                        class="text-box"
+                        placeholder="Слово1, слово2, ..."
+                        minlength="5"
+                        maxlength="255"
+                        required>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="product-info-bottom">
+            <div class="product-price-and-discount-container">
+                <div class="text-box-container">
+                    <label for="price" class="product-info-label">Ціна:</label>
+                    <input
+                            th:value="${oldProduct.price}"
+                            id="price"
+                            class="text-box"
+                            placeholder="100"
+                            maxlength="8"
+                            pattern="[0-9]{1,5}(\.[0-9]{1,2})?"
+                            required />
+                </div>
+
+                <div class="checkbox-container">
+                    <input
+                            th:checked="${oldProduct.withDiscount}"
+                            id="with_discount_checkbox"
+                            type="checkbox"
+                            onchange="  let btn=getElementById('with_discount_checkbox')
+                                            let d1=getElementById('discounted_price')
+                                            d1.disabled=!btn.checked;" />
+                    <label for="with_discount_checkbox" class="product-info-label">Акція</label>
+                </div>
+
+                <div class="text-box-container">
+                    <label
+                            for="discounted_price"
+                            class="product-info-label">
+                        Акційна ціна:
+                    </label>
+                    <input
+                            th:value="${oldProduct.discountedPrice}"
+                            name="discounted_price"
+                            class="text-box"
+                            id="discounted_price"
+                            placeholder="50"
+                            maxlength="8"
+                            pattern="[0-9]{1,5}(\.[0-9]{1,2})?"
+                            required
+                            th:disabled="${not oldProduct.withDiscount}" />
+                </div>
+            </div>
+
+            <div class="product-stock-container">
+                <div class="checkbox-container">
+                    <input
+                            th:checked="${oldProduct.inStock}"
+                            id="in_stock_checkbox"
+                            type="checkbox"
+                            onchange="  let btn=getElementById('in_stock_checkbox')
+                                            let d1=getElementById('quantity')
+                                            d1.disabled=!btn.checked;" />
+                    <label for="in_stock_checkbox" class="product-info-label">В наявності</label>
+                </div>
+
+                <div class="text-box-container">
+                    <label
+                            for="quantity"
+                            class="product-info-label">
+                        Кількість:
+                    </label>
+                    <input
+                            th:value="${oldProduct.quantity}"
+                            id="quantity"
+                            type="number"
+                            class="text-box"
+                            placeholder="5"
+                            min="0"
+                            required
+                            th:disabled="${not oldProduct.inStock}" />
+                </div>
+            </div>
+
+            <div class="product-gift-set-info-container">
+                <p th:if="${oldProduct.canAddToGiftSet}" class="product-info-label text">Можна додати до подарункового набору:</p>
+                <p th:if="${oldProduct.canAddToGiftSet}" th:text="'до ' + ${oldProduct.maxQuantityInGiftSet} + ' одиниць в наборі'" class="product-info-label text"></p>
+
+                <p th:unless="${oldProduct.canAddToGiftSet}" class="product-info-label text">Не можна додати до подарункового набору</p>
+            </div>
+
+            <div class="product-category-and-options-container">
+                <div class="category-container">
+                    <label for="category" class="product-info-label">Категорія:</label>
+                    <select
+                            id="category"
+                            class="category-select"
+                            required>
+                        <option
+                                th:each="category : ${categories}"
+                                th:text="${category.name}"
+                                th:value="${category.id}"
+                                th:selected="${category.id == oldProduct.category.id}"
+                                class="category-option">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="options-container">
+                    <button
+                            type="button"
+                            class="btn btn-outline-danger delete-product-btn"
+                            th:id="${oldProduct.id}">
+                        Видалити
+                    </button>
+                    <a th:href="@{/admin/products}">
+                        <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                id="cancel_btn">
+                            Скасувати
+                        </button>
+                    </a>
+                    <button
+                            type="submit"
+                            class="btn btn-outline-primary save-product-btn"
+                            th:id="${oldProduct.id}">
+                        Зберегти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>
+<script type="text/javascript" th:src="@{/js/admin/edit_product.js}"></script>
+<script src="/js/parse_photos.js"></script>
+</body>
+</html>

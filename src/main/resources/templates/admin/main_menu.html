@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin: Меню</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/auth_and_menu.css" />
+    <link rel="stylesheet" href="/css/pages/menu.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <header th:insert="layout :: header"></header>
+
+    <main class="main-container">
+        <div class="product-container">
+            <a th:href="@{/admin/products}">
+                <button class="btn btn-admin btn-outline-primary" id="all_products_btn">
+                    Переглянути всі товари
+                </button>
+            </a>
+            <a th:href="@{/admin/orders}">
+                <button class="btn btn-admin btn-outline-primary" id="fav_products_btn">
+                    Переглянути всі замовлення
+                </button>
+            </a>
+            <a th:href="@{/admin/contacts}">
+                <button class="btn btn-admin btn-outline-primary" id="cart_btn">
+                    Редагувати контактні дані
+                </button>
+            </a>
+            <a th:href="@{/admin/statistics}">
+                <button class="btn btn-admin btn-outline-primary" id="list_of_orders_btn">
+                    Переглянути статистику
+                </button>
+            </a>
+            <a th:href="@{/menu}">
+                <button class="btn btn-admin btn-outline-secondary" id="admin_menu_btn">
+                    Панель користувача
+                </button>
+            </a>
+        </div>
+
+        <div class="profile-container">
+            <form th:action="@{/logout}" method="POST">
+                <button class="btn btn-admin btn-outline-secondary" id="sign_out_btn">Вийти</button>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

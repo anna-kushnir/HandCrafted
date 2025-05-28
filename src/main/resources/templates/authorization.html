@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Авторизація</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/auth_and_menu.css" />
+    <link rel="stylesheet" href="/css/pages/guest/authorization.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <header th:insert="layout :: header"></header>
+
+    <main>
+        <p th:if="${message}" th:text="${message}" class="error-msg"></p>
+
+        <form th:action="@{/login}" method="POST" class="form-container">
+            <div class="data-container">
+                <label for="username" class="label">Введіть ім'я користувача:</label>
+                <input
+                        type="text"
+                        name="username"
+                        class="text-box"
+                        id="username"
+                        placeholder="user_name"
+                        minlength="8"
+                        maxlength="20"
+                        required />
+                <label for="password" class="label">Введіть пароль:</label>
+                <input
+                        type="password"
+                        name="password"
+                        class="text-box"
+                        id="password"
+                        placeholder="password"
+                        minlength="6"
+                        maxlength="12"
+                        required />
+            </div>
+
+            <div class="btn-container">
+                <a th:href="@{/}">
+                    <button type="button" class="btn btn-outline-secondary" id="cancel_btn">Скасувати</button>
+                </a>
+                <button type="submit" name="submit" class="btn btn-outline-primary" id="sign_in_btn">
+                    Увійти
+                </button>
+                </div>
+        </form>
+
+        <div>
+            <p class="footer-text label">Ще не маєте акаунту?</p>
+            <a th:href="@{/register}" class="footer-text label">Зареєструватися</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

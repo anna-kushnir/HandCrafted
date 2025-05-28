@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>HandCrafted: Меню</title>
+  <link rel="stylesheet" href="/css/bases/general.css" />
+  <link rel="stylesheet" href="/css/bases/auth_and_menu.css" />
+  <link rel="stylesheet" href="/css/pages/menu.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+          rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+  <header th:insert="layout :: header"></header>
+
+  <main class="main-container">
+    <div class="product-container">
+      <a th:href="@{/products}">
+        <button class="btn btn-user btn-outline-primary" id="all_products_btn">
+          Усі товари
+        </button>
+      </a>
+      <a th:href="@{/favorite}">
+        <button class="btn btn-user btn-outline-primary" id="fav_products_btn">
+          Вподобані товари
+        </button>
+      </a>
+      <a th:href="@{/cart}">
+        <button class="btn btn-user btn-outline-primary" id="cart_btn">
+          Кошик
+        </button>
+      </a>
+      <a th:href="@{/orders}">
+        <button class="btn btn-user btn-outline-primary" id="list_of_orders_btn">
+          Мої замовлення
+        </button>
+      </a>
+      <a th:if="${isAdmin}" th:href="@{/admin/menu}">
+        <button class="btn btn-user btn-outline-secondary" id="admin_menu_btn">
+          Панель адміністратора
+        </button>
+      </a>
+    </div>
+
+    <div class="profile-container">
+      <a th:href="@{/editProfile}">
+        <button class="btn btn-user btn-outline-secondary" id="profile_btn">
+          Мій профіль
+        </button>
+      </a>
+      <form th:action="@{/logout}" method="POST">
+        <button class="btn btn-user btn-outline-secondary" id="sign_out_btn">
+          Вийти
+        </button>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

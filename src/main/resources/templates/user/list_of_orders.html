@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Замовлення</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/list_of_orders.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:insert="layout :: user-menu"></a>
+        </div>
+    </div>
+
+    <div th:if="${message}" role="alert" th:text="${message}" class="alert"></div>
+    <div th:unless="${message}"></div>
+
+    <div class="main">
+        <div th:unless="${orders.isEmpty()}" class="order-listing">
+            <div th:each="order : ${orders}">
+                <a th:href="@{/orders/{id}(id=${order.id})}">
+                    <div class="order-card">
+                        <p class="text" th:text="'Номер замовлення: ' +${order.id}"></p>
+                        <p class="text" th:text="'Вартість: ' +${order.price} +'₴'"></p>
+                        <p class="text" th:text="'Тип отримання замовлення: ' +${order.typeOfReceipt.getName()}"></p>
+                        <p class="text" th:text="'Дата й час створення замовлення: ' +${order.formationDate}"></p>
+                        <p class="text" th:switch="${order.status.getId()}">Статус:
+                            <span th:case="1" style="color: #a80b0b;" class="text" th:text="${order.status.getName()}"></span>
+                            <span th:case="2" style="color: #d95319;" class="text" th:text="${order.status.getName()}"></span>
+                            <span th:case="3" style="color: #b6921c;" class="text" th:text="${order.status.getName()}"></span>
+                            <span th:case="4" style="color: #3b9616;" class="text" th:text="${order.status.getName()}"></span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${orders.isEmpty()}" class="empty-msg">Замовлень ще немає</div>
+    </div>
+</main>
+</body>
+</html>

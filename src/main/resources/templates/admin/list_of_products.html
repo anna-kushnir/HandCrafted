@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin: Усі товари</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/list_of_products.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body id="body">
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container main-container-admin">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+
+        <div class="header-menu-right">
+            <div class="search-container">
+                <input
+                        type="text"
+                        class="text-box"
+                        id="search_line"
+                        placeholder="Пошук"
+                        maxlength="25" />
+            </div>
+            <button class="btn btn-outline-primary" id="find_btn">Шукати</button>
+        </div>
+    </div>
+
+    <div class="options-container">
+        <a th:href="@{/admin/categories}">
+            <button
+                    class="btn btn-outline-secondary"
+                    id="edit_categories_btn">
+                Редагувати категорії
+            </button>
+        </a>
+
+        <a th:href="@{/admin/products/add}">
+            <button
+                    class="btn btn-outline-secondary"
+                    id="add_new_product_btn">
+                Додати новий товар
+            </button>
+        </a>
+    </div>
+
+    <div th:if="${message}" role="alert" th:text="${message}" class="alert"></div>
+    <div th:unless="${message}"></div>
+
+    <div class="main">
+        <div class="left-menu">
+            <button
+                    class="btn btn-outline-menu"
+                    id="categories_btn"
+                    onclick="   let list=getElementById('categories-container')
+                                    if (list.style.display === 'none') list.style.display='block'
+                                    else list.style.display='none'">
+                Категорії
+            </button>
+            <div id="categories-container" style="display: block">
+                <ul class="list">
+                    <li th:each="category : ${categories}">
+                        <button
+                                th:id="${category.id}"
+                                class="btn btn-category"
+                                th:text="${category.name}">
+                            Назва
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                                id="0"
+                                class="btn btn-category">
+                            Усі товари
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:unless="${products.isEmpty()}" class="product-listing">
+            <div th:each="product : ${products}">
+                <a th:href="@{/admin/products/{id}/edit(id=${product.id})}">
+                    <div class="product-card">
+                        <div class="product-img-container">
+                            <img
+                                    th:if="${product.photos}"
+                                    th:src="'data:image/jpeg;base64,' + ${product.photos.get(0)}"
+                                    class="product-img"
+                                    alt="фото товару" />
+                            <img
+                                    th:unless="${product.photos}"
+                                    src="/icons/image.png"
+                                    class="product-img"
+                                    alt="фото товару" />
+                            <p th:unless="${product.inStock}" class="product-not-in-stock">
+                                Не в наявності
+                            </p>
+                        </div>
+                        <p th:text="${product.name}" class="product-name"></p>
+                        <div th:unless="${product.withDiscount}" class="product-price-container">
+                            <p th:text="${product.price} +'₴'" class="product-price"></p>
+                        </div>
+                        <div th:if="${product.withDiscount}" class="product-price-container">
+                            <s><p th:text="${product.price} +'₴'" class="product-price"></p></s>
+                            <p
+                                    th:text="${product.discountedPrice} +'₴'"
+                                    class="product-price discounted-price">
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${products.isEmpty()}" class="empty-msg">Товарів не знайдено</div>
+    </div>
+</main>
+<script type="text/javascript" th:src="@{/js/admin/list_of_products.js}"></script>
+</body>
+</html>

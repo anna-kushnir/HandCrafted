@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin: Пошук замовлень</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/list_of_orders.css" />
+    <link rel="stylesheet" href="/css/pages/admin/find_orders.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/admin/orders}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="search-container">
+            <div class="form-container">
+                <label for="user_phone" class="label">Введіть номер телефону користувача:</label>
+                <input
+                        type="number"
+                        id="user_phone"
+                        class="text-box"
+                        placeholder="737777777"
+                        min="100000000"
+                        max="999999999" />
+                <button type="button" id="find_by_phone_btn" class="btn btn-outline-secondary">Знайти за номером телефону</button>
+            </div>
+
+            <div class="form-container">
+                <label for="order_id" class="label">Введіть номер замовлення:</label>
+                <input
+                        type="number"
+                        id="order_id"
+                        class="text-box"
+                        placeholder="1"
+                        min="0" />
+                <button type="button" id="find_by_order_id_btn" class="btn btn-outline-secondary">Знайти за номером замовлення</button>
+            </div>
+        </div>
+
+        <div th:if="${searchFlag && !orders.isEmpty()}" class="order-listing">
+            <div th:each="order : ${orders}">
+                <a th:href="@{/admin/orders/__${order.status.toString().toLowerCase()}__/__${order.id}__}">
+                    <div class="order-card">
+                        <p class="text" th:text="'Номер замовлення: ' +${order.id}"></p>
+                        <p class="text" th:text="'Користувач: ' +${order.user.name} +' ' +${order.user.surname}"></p>
+                        <p class="text" th:text="'Вартість: ' +${order.price} +'₴'"></p>
+                        <p class="text" th:text="'Тип отримання замовлення: ' +${order.typeOfReceipt.getName()}"></p>
+                        <p class="text" th:text="'Дата й час створення замовлення: ' +${order.formationDate}"></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${searchFlag && orders.isEmpty()}" class="empty-msg">Замовлень не знайдено</div>
+
+        <div th:unless="${searchFlag}" class="empty-msg" style="max-width: 50vw;">Щоб знайти замовлення, введіть номер телефону користувача або номер замовлення і натисніть відповідну кнопку</div>
+    </div>
+</main>
+<script type="text/javascript" th:src="@{/js/admin/find_orders.js}"></script>
+</body>
+</html>

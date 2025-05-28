@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: 'postgres_db_handcrafted'
+    restart: 'always'
+    ports:
+      - '5432:5432'
+    volumes:
+      - handcrafted_pg_volume:/var/lib/postgresql/data
+    environment:
+      - 'POSTGRES_USER=postgres_user'
+      - 'POSTGRES_PASSWORD=postgres_pass'
+      - 'POSTGRES_DB=handcrafted_data'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: '10s'
+      timeout: '5s'
+      retries: '5'
+
+  app:
+    image: 'handcrafted-app'
+    container_name: 'app_handcrafted'
+    restart: 'always'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/handcrafted_data
+
+volumes:
+  handcrafted_pg_volume:
+    name: handcrafted_pg_volume
+
+networks:
+  default:
+    name: 'network_handcrafted'

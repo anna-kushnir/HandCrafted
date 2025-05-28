@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin: Додати товар</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/admin/product.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <div class="header">
+        <div class="header-menu-left">
+            <a th:href="@{/admin/products}">
+                <button class="back-btn" id="back_btn">
+                    <img
+                            id="back_icon"
+                            src="/icons/back_icon1.png"
+                            width="20px"
+                            height="20px"
+                            alt="кнопка повернення" />
+                </button>
+            </a>
+            <a th:insert="layout :: admin-menu"></a>
+        </div>
+    </div>
+
+    <form onsubmit="submitAddProduct(event)" class="product-form-container">
+        <div class="product-info-top">
+            <div class="product-info-left">
+                <div class="product-photo-options">
+                    <label for="photo" class="btn btn-outline-secondary">Додати фото</label>
+                    <input
+                            type="file"
+                            id="photo"
+                            name="photo"
+                            accept=".jpg, .jpeg, .png"
+                            class="photo-input"
+                            multiple />
+                </div>
+
+                <div class="photo-preview-container">
+                </div>
+            </div>
+
+            <div class="product-info-right">
+                <input
+                        id="name"
+                        type="text"
+                        class="text-box"
+                        placeholder="Назва товару"
+                        minlength="3"
+                        maxlength="25"
+                        required />
+
+                <label for="description" class="product-info-label">Опис:</label>
+                <textarea
+                        id="description"
+                        class="text-box"
+                        placeholder="Опис товару"
+                        minlength="5"
+                        maxlength="255"
+                        required></textarea>
+
+                <label for="colors" class="product-info-label">Кольори:</label>
+                <textarea
+                        id="colors"
+                        class="text-box"
+                        placeholder="колір1, колір2, ..."
+                        minlength="3"
+                        maxlength="255"
+                        required></textarea>
+
+                <label for="key_words" class="product-info-label">Ключові слова:</label>
+                <textarea
+                        id="key_words"
+                        class="text-box"
+                        placeholder="Слово1, слово2, ..."
+                        minlength="5"
+                        maxlength="255"
+                        required></textarea>
+            </div>
+        </div>
+
+        <div class="product-info-bottom">
+            <div class="product-price-container">
+                <div class="text-box-container">
+                    <label for="price" class="product-info-label">Ціна:</label>
+                    <input
+                            id="price"
+                            class="text-box"
+                            placeholder="100"
+                            maxlength="8"
+                            pattern="[0-9]{1,5}(\.[0-9]{1,2})?"
+                            required />
+                </div>
+            </div>
+
+            <div class="product-stock-container">
+                <div class="checkbox-container">
+                    <input
+                            id="in_stock_checkbox"
+                            type="checkbox"
+                            onchange="  let btn=getElementById('in_stock_checkbox')
+                                            let d1=getElementById('quantity')
+                                            d1.disabled=!btn.checked;" />
+                    <label for="in_stock_checkbox" class="product-info-label">В наявності</label>
+                </div>
+
+                <div class="text-box-container">
+                    <label
+                            for="quantity"
+                            class="product-info-label">
+                        Кількість:
+                    </label>
+                    <input
+                            id="quantity"
+                            type="number"
+                            class="text-box"
+                            placeholder="5"
+                            min="0"
+                            required
+                            disabled />
+                </div>
+            </div>
+
+            <div class="product-gift-set-options-container">
+                <div class="checkbox-container-gift-set" id="checkbox_container_gift_set">
+                    <input
+                            id="can_add_to_gift_set_checkbox"
+                            type="checkbox"
+                            onchange="  let btn=getElementById('can_add_to_gift_set_checkbox')
+                                            let d1=getElementById('max_quantity_in_gift_set')
+                                            d1.disabled=!btn.checked;" />
+                    <label for="can_add_to_gift_set_checkbox" class="product-info-label">Можна додати в подарунковий набір</label>
+                </div>
+
+                <div class="text-box-container">
+                    <label
+                            for="max_quantity_in_gift_set"
+                            class="product-info-label">
+                        Максимальна кількість в подарунковому наборі:
+                    </label>
+                    <input
+                            id="max_quantity_in_gift_set"
+                            type="number"
+                            class="text-box"
+                            placeholder="5"
+                            min="0"
+                            required
+                            disabled />
+                </div>
+            </div>
+
+            <div class="product-category-and-options-container">
+                <div class="category-container">
+                    <label for="category" class="product-info-label">Категорія:</label>
+                    <select
+                            id="category"
+                            class="category-select"
+                            required>
+                        <option
+                                th:each="category : ${categories}"
+                                th:text="${category.name}"
+                                th:value="${category.id}"
+                                class="category-option">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="options-container">
+                    <a th:href="@{/admin/products}">
+                        <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                id="cancel_btn">
+                            Скасувати
+                        </button>
+                    </a>
+                    <button
+                            type="submit"
+                            class="btn btn-outline-primary"
+                            id="add_product_btn">
+                        Додати
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>
+<script type="text/javascript" th:src="@{/js/admin/add_product.js}"></script>
+</body>
+</html>

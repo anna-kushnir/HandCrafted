@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HandCrafted: Усі товари</title>
+  <link rel="stylesheet" href="/css/bases/general.css" />
+  <link rel="stylesheet" href="/css/bases/main.css" />
+  <link rel="stylesheet" href="/css/pages/list_of_products.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+          rel="stylesheet" />
+</head>
+<body id="body">
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+  <div class="header">
+    <div class="header-menu-left">
+      <a th:insert="layout :: user-menu"></a>
+    </div>
+
+    <div class="header-menu-right">
+      <div class="search-container">
+        <input
+                type="text"
+                class="text-box"
+                id="search_line"
+                placeholder="Пошук"
+                maxlength="25" />
+      </div>
+      <button class="btn btn-outline-primary" id="find_btn">Шукати</button>
+    </div>
+  </div>
+
+<!--  TODO: видалити, якщо не потрібно виведення цього повідомлення -->
+  <div th:if="${message}" role="alert" th:text="${message}" class="alert"></div>
+  <div th:unless="${message}"></div>
+
+  <div class="main">
+    <div class="left-menu">
+      <button
+              class="btn btn-outline-menu"
+              id="filters_btn"
+              onclick=" let list=getElementById('filters-container')
+                        if (list.style.display === 'none')
+                            list.style.display='block'
+                        else list.style.display='none'">
+        Фільтри
+      </button>
+      <div id="filters-container" style="display: none">
+        <ul class="list">
+          <li class="sort">
+            <p class="filter-label">Сортувати за:</p>
+            <ul class="list sort-by-list">
+              <li class="sort-by-cost">
+                <input
+                        type="checkbox"
+                        id="checkbox_cost"
+                        onchange="  let btn=getElementById('checkbox_cost')
+                                    let rb1=getElementById('cost_sort_direction_asc')
+                                    let rb2=getElementById('cost_sort_direction_desc')
+                                    if (btn.checked) {
+                                        rb1.disabled=false
+                                        rb2.disabled=false
+                                    }
+                                    else {
+                                        rb1.disabled=true
+                                        rb2.disabled=true
+                                    }" />
+                <label for="checkbox_cost">Ціною</label>
+                <div id="cost_sort_direction">
+                  <div>
+                    <input
+                            type="radio"
+                            name="cost_radio_group"
+                            class="sort-direction"
+                            id="cost_sort_direction_asc"
+                            value="asc"
+                            checked
+                            disabled />
+                    <label for="cost_sort_direction_asc">За зростанням</label>
+                  </div>
+                  <div>
+                    <input
+                            type="radio"
+                            name="cost_radio_group"
+                            class="sort-direction"
+                            id="cost_sort_direction_desc"
+                            value="desc"
+                            disabled />
+                    <label for="cost_sort_direction_desc">За спаданням</label>
+                  </div>
+                </div>
+              </li>
+
+              <li class="sort-by-newness">
+                <input
+                        type="checkbox"
+                        id="checkbox_newness"
+                        onchange="  let btn=getElementById('checkbox_newness')
+                                    let rb1=getElementById('newness_sort_direction_asc')
+                                    let rb2=getElementById('newness_sort_direction_desc')
+                                    if (btn.checked) {
+                                        rb1.disabled=false
+                                        rb2.disabled=false
+                                    }
+                                    else {
+                                        rb1.disabled=true
+                                        rb2.disabled=true
+                                    }" />
+                <label for="checkbox_newness">Новизною</label>
+                <div id="newness_sort_direction">
+                  <div>
+                    <input
+                            type="radio"
+                            name="newness_radio_group"
+                            class="sort-direction"
+                            id="newness_sort_direction_asc"
+                            value="asc"
+                            checked
+                            disabled />
+                    <label for="newness_sort_direction_asc">За зростанням</label>
+                  </div>
+                  <div>
+                    <input
+                            type="radio"
+                            name="newness_radio_group"
+                            class="sort-direction"
+                            id="newness_sort_direction_desc"
+                            value="desc"
+                            disabled />
+                    <label for="newness_sort_direction_desc">За спаданням</label>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+          <li class="price-limits">
+            <p class="filter-label">Ціновий діапазон:</p>
+            <div class="price-limits-container">
+              <label for="price_from" class="price-limit-label">Від:</label>
+              <input
+                      type="number"
+                      class="text-box price-limit"
+                      id="price_from"
+                      placeholder="0"
+                      maxlength="5"
+                      min="0" />
+              <br />
+              <label for="price_to" class="price-limit-label">До:</label>
+              <input
+                      type="number"
+                      class="text-box price-limit"
+                      id="price_to"
+                      placeholder="10000"
+                      maxlength="5"
+                      min="0" />
+            </div>
+          </li>
+
+          <li class="colors">
+            <p class="filter-label">Кольори:</p>
+            <ul class="list colors-list">
+              <li th:each="color : ${colors}">
+                <input
+                        type="checkbox"
+                        th:id="'checkbox_color_' +${color.id}" />
+                <label
+                        th:for="'checkbox_color_' +${color.id}"
+                        th:text="${color.name}">
+                  name
+                </label>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <button type="button" id="apply_filters_btn" class="btn btn-outline-secondary" style="font-size: 16px;">Застосувати фільтри</button>
+      </div>
+
+      <button
+              class="btn btn-outline-menu"
+              id="categories_btn"
+              onclick="   let list=getElementById('categories-container')
+                          if (list.style.display === 'none') list.style.display='block'
+                          else list.style.display='none'">
+        Категорії
+      </button>
+      <div id="categories-container" style="display: block">
+        <ul class="list">
+          <li th:each="category : ${categories}">
+            <button
+                    th:id="${category.id}"
+                    class="btn btn-category"
+                    th:text="${category.name}">
+              Назва
+            </button>
+          </li>
+          <li>
+            <button
+                    id="0"
+                    class="btn btn-category">
+              Усі товари
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div th:unless="${products.isEmpty()}" class="product-listing">
+      <div th:each="product : ${products}">
+        <a th:href="@{/products/{id}(id=${product.id})}">
+          <div class="product-card">
+            <div class="product-img-container">
+              <img
+                      th:if="${product.photos}"
+                      th:src="'data:image/jpeg;base64,' + ${product.photos.get(0)}"
+                      class="product-img"
+                      alt="фото товару" />
+              <img
+                      th:unless="${product.photos}"
+                      src="/icons/image.png"
+                      class="product-img"
+                      alt="фото товару" />
+              <p th:unless="${product.inStock}" class="product-not-in-stock">
+                Не в наявності
+              </p>
+            </div>
+            <p th:text="${product.name}" class="product-name"></p>
+            <div th:unless="${product.withDiscount}" class="product-price-container">
+              <p th:text="${product.price} +'₴'" class="product-price"></p>
+            </div>
+            <div th:if="${product.withDiscount}" class="product-price-container">
+              <s><p th:text="${product.price} +'₴'" class="product-price"></p></s>
+              <p
+                      th:text="${product.discountedPrice} +'₴'"
+                      class="product-price discounted-price">
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div th:if="${products.isEmpty()}" class="empty-msg">Товарів не знайдено</div>
+  </div>
+</main>
+<script type="text/javascript" th:src="@{/js/guest/list_of_products.js}"></script>
+</body>
+</html>
