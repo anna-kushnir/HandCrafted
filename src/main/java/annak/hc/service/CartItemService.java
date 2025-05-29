@@ -21,8 +21,10 @@ public interface CartItemService {
     void delete(User user, GiftSetDto giftSetDto);
     void deleteAllByProductId(Long productId);
 
+    String updateQuantityByProductId(Long productId, Long newQuantity);
     String updateQuantityByUserAndProduct(User user, ProductDto productDto, Long quantity);
     BigDecimal getTotalPriceOfItemsInCart(List<CartItemDto> cartItemDtoList);
 
     List<CartItemDto> convertGuestItemsToDto(List<GuestCartItemDto> guestItems);
+    void mergeCartItems(User user, List<GuestCartItemDto> guestCartItems);
 }

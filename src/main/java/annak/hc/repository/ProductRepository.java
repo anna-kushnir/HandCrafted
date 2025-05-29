@@ -20,17 +20,20 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Optional<Product> findByIdAndDeletedIsFalse(Long id);
 
-    @Query("SELECT DISTINCT p " +
-            "FROM Product p " +
-            "LEFT JOIN p.category c " +
-            "LEFT JOIN p.colors col " +
-            "WHERE (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(p.keyWords) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(col.name) LIKE LOWER(CONCAT('%', :keyword, '%')))" +
-            "   AND NOT p.deleted")
-    List<Product> searchProductsBySearchLineAndDeletedIsFalse(@Param("keyword") String searchLine);
+    @Query("""
+            SELECT DISTINCT p
+            FROM Product p
+            LEFT JOIN p.category c
+            LEFT JOIN p.colors col
+            WHERE p.category.id = :categoryId AND
+               (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(p.keyWords) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(col.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+               AND NOT p.deleted
+            """)
+    List<Product> searchProductsBySearchLineAndDeletedIsFalse(@Param("keyword") String searchLine, @Param("categoryId") long categoryId);
 
     @Query("""
             SELECT DISTINCT oi.product

@@ -19,16 +19,14 @@
 <main class="container main-container">
     <div class="header">
         <div class="header-menu-left">
-            <a th:href="@{/products}">
-                <button class="back-btn" id="back_btn">
-                    <img
-                            id="back_icon"
-                            src="/icons/back_icon1.png"
-                            width="20px"
-                            height="20px"
-                            alt="кнопка повернення" />
-                </button>
-            </a>
+            <button class="back-btn" id="back_btn" onclick="goBack()">
+                <img
+                        id="back_icon"
+                        src="/icons/back_icon1.png"
+                        width="20px"
+                        height="20px"
+                        alt="кнопка повернення" />
+            </button>
             <a th:insert="layout :: user-menu"></a>
         </div>
     </div>
@@ -78,7 +76,8 @@
                     </div>
 
                     <div class="product-options">
-                        <form th:action="@{/products/{id}/addToFavorites(id=${product.id})}" th:method="POST">
+                        <form th:action="@{/products/{id}/addToFavorites(id=${product.id})}"
+                                th:method="POST">
                             <button class="menu-btn" id="add_to_favorite_btn">
                                 <img
                                         id="favorite_icon"
@@ -88,8 +87,9 @@
                                         alt="кнопка додавання товару до вподобаного" />
                             </button>
                         </form>
-                        <form th:action="@{/products/{id}/addToCart(id=${product.id})}" th:method="POST">
-                            <button type="submit" th:if="${product.inStock}" class="menu-btn" id="add_to_cart_btn">
+                        <form th:if="${isAuthenticated && product.inStock}" th:action="@{/products/{id}/addToCart(id=${product.id})}"
+                              th:method="POST">
+                            <button class="menu-btn" id="add_to_cart_btn">
                                 <img
                                         id="cart_icon"
                                         src="/icons/cart1.png"
@@ -98,6 +98,14 @@
                                         alt="кнопка додавання товару до кошика" />
                             </button>
                         </form>
+                        <button th:if="${!isAuthenticated && product.inStock}" class="menu-btn add-to-cart-btn" th:id="${product.id}">
+                            <img
+                                    id="cart_icon_2"
+                                    src="/icons/cart1.png"
+                                    width="30px"
+                                    height="30px"
+                                    alt="кнопка додавання товару до кошика" />
+                        </button>
                     </div>
                 </div>
 
@@ -105,8 +113,9 @@
                     Не в наявності
                 </div>
 
-                <div th:if="${msgAddToCart}" role="alert" th:text="${msgAddToCart}" class="alert"></div>
-                <div th:if="${msgAddToFavorites}" role="alert" th:text="${msgAddToFavorites}" class="alert"></div>
+                <div th:unless="${isAuthenticated}" id="client_msg_box" role="alert" class="alert" style="display: none;"></div>
+                <div th:if="${msgAddToCart}" id="cart_msg_box" role="alert" th:text="${msgAddToCart}" class="alert"></div>
+                <div th:if="${msgAddToFavorites}" id="favorite_msg_box" role="alert" th:text="${msgAddToFavorites}" class="alert"></div>
             </div>
 
             <div class="product-info-right">
@@ -167,7 +176,9 @@
         </div>
     </div>
 </main>
+<script th:inline="javascript">const isAuthenticated = [[${isAuthenticated}]];</script>
 <script src="/js/guest/product.js"></script>
+<script src="/js/go_back.js"></script>
 <script src="/js/parse_photos.js"></script>
 </body>
 </html>

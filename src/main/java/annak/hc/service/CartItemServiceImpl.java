@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,22 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    public String updateQuantityByProductId(Long productId, Long newQuantity) {
+        Optional<Product> productOptional = productRepository.findByIdAndDeletedIsFalse(productId);
+        if (productOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Товар з id <%s> не було знайдено".formatted(productId));
+        }
+        List<CartItem> cartItems = cartItemRepository.findAllByProduct(productOptional.get());
+        for (var cartItem : cartItems) {
+            if (cartItem.getQuantityInCart() > newQuantity) {
+                cartItem.setQuantityInCart(newQuantity);
+                cartItemRepository.save(cartItem);
+            }
+        }
+        return "Кількість товарів у кошику для товару з id <%s> було успішно змінено".formatted(productId);
+    }
+
+    @Override
     public String updateQuantityByUserAndProduct(User user, ProductDto productDto, Long quantity) {
         Optional<CartItem> cartItemOptional = cartItemRepository.findByUserAndProductId(user, productDto.getId());
         if (cartItemOptional.isEmpty()) {
@@ -121,21 +138,51 @@ public class CartItemServiceImpl implements CartItemService {
                 .map(item -> {
                     Optional<Product> productOptional = productRepository.findByIdAndDeletedIsFalse(item.getProductId());
                     if (productOptional.isEmpty()) {
-                        throw new ResourceNotFoundException("Товар з id <%s> не було знайдено".formatted(item.getProductId()));
+                        return null;
                     }
                     Product product = productOptional.get();
+                    if (!product.isInStock()) {
+                        return null;
+                    }
                     CartItemDto cartItemDto = new CartItemDto();
                     cartItemDto.setName(product.getName());
                     cartItemDto.setCost(product.isWithDiscount() ?
                             product.getDiscountedPrice() : product.getPrice()
                     );
-                    cartItemDto.setQuantityInCart(item.getQuantityInCart());
+                    cartItemDto.setQuantityInCart(Math.min(item.getQuantityInCart(), product.getQuantity()));
                     cartItemDto.setPhotos(List.of(product.getPhotos().get(0).getPhoto()));
                     cartItemDto.setGiftSet(false);
 
                     cartItemDto.setProductId(product.getId());
                     cartItemDto.setProductQuantity(product.getQuantity());
                     return cartItemDto;
-                }).toList();
+                })
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void mergeCartItems(User user, List<GuestCartItemDto> guestCartItems) {
+        for (GuestCartItemDto guestCartItem : guestCartItems) {
+            var productOptional = productRepository.findById(guestCartItem.getProductId());
+            if (productOptional.isEmpty()) {
+                throw new ResourceNotFoundException("Товар з id <%s> не було знайдено".formatted(guestCartItem.getProductId()));
+            }
+
+            var product = productOptional.get();
+            if (product.isInStock()) {
+                var existingProductInCart = cartItemRepository.findByUserAndProductId(user, product.getId());
+                if (existingProductInCart.isPresent()) {
+                    existingProductInCart.get().setQuantityInCart(Math.min(
+                            Math.max(existingProductInCart.get().getQuantityInCart(), guestCartItem.getQuantityInCart()),
+                            product.getQuantity()));
+                } else {
+                    cartItemRepository.save(new CartItem(null, user, product, null, Math.min(
+                            guestCartItem.getQuantityInCart(),
+                            product.getQuantity())));
+                }
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ColorRepository extends JpaRepository<Color, Long> {
     List<Color> findAllByOrderByNameAsc();
+    List<Color> findAllByIdIn(List<Long> id);
 
     Color findByName(String name);
     boolean existsByName(String name);

@@ -23,6 +23,11 @@ public class ColorServiceImpl implements ColorService {
         return colorRepository.findAllByOrderByNameAsc();
     }
 
+    @Override
+    public List<Color> getAllByIds(List<Long> colorIds) {
+        return colorRepository.findAllByIdIn(colorIds);
+    }
+
     public String convertColorsToString(Set<Color> colorsList) {
         return colorMapper.colorsToString(colorsList);
     }

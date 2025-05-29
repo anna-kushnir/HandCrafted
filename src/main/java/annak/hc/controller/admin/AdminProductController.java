@@ -26,7 +26,8 @@ public class AdminProductController {
         if (categoryId != 0) {
             model.addAttribute("products", productService.getAllNotDeletedByCategoryId(categoryId));
         } else if (search != null) {
-            model.addAttribute("products", productService.getAllNotDeletedBySearchLine(search));
+            // TODO: доробити фільтрацію для адміна
+            model.addAttribute("products", productService.getAllNotDeletedBySearchLine(0L, search));
         } else {
             model.addAttribute("products", productService.getAllNotDeleted());
         }

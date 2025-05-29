@@ -126,6 +126,12 @@
     color: #fff;
 }
 
+.btn-category.active-category {
+    background-color: #f000ff86;
+    color: #fff;
+    cursor: auto;
+}
+
 /* --------- Product list --------- */
 
 .product-listing {

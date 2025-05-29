@@ -47,14 +47,21 @@ if (!isAuthenticated) {
             orderControls.style.display = "flex";
         }
 
+        localStorage.removeItem("cart");
+        const newLocalCart = [];
+
         cartItems.forEach(item => {
+            newLocalCart.push({productId: item.productId, quantityInCart: item.quantityInCart});
+
             const card = document.createElement("div");
             card.classList.add("product-card");
 
             card.innerHTML = `
                 <div class="product-img-and-info-container">
                     <div class="product-img-container">
-                        <img src="data:image/jpeg;base64,${item.photos[0]}" class="product-img" alt="фото товару" />
+                        <a href="/products/${item.productId}">
+                            <img src="data:image/jpeg;base64,${item.photos[0]}" class="product-img" alt="фото товару" />
+                        </a>
                     </div>
                     <div class="product-info-container">
                         <p>${item.name}</p>
@@ -80,6 +87,7 @@ if (!isAuthenticated) {
             totalPrice += item.cost * item.quantityInCart;
         });
 
+        localStorage.setItem("cart", JSON.stringify(newLocalCart));
         totalPriceContainer.innerHTML = `${totalPrice}₴`;
     }
 }

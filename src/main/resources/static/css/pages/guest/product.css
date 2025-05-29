@@ -88,14 +88,16 @@
 .menu-btn:hover #favorite_icon {
     content: url("../../../icons/heart2.png");
 }
-.menu-btn:hover #cart_icon {
+.menu-btn:hover #cart_icon,
+.menu-btn:hover #cart_icon_2 {
     content: url("../../../icons/cart2.png");
 }
 
 .menu-btn:active #favorite_icon {
     content: url("../../../icons/heart3.png");
 }
-.menu-btn:active #cart_icon {
+.menu-btn:active #cart_icon,
+.menu-btn:active #cart_icon_2 {
     content: url("../../../icons/cart3.png");
 }
 

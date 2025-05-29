@@ -26,9 +26,8 @@ public class ProductController {
     private final CartItemService cartItemService;
     private final FavoriteProductService favoriteProductService;
 
-    // TODO: додати фільтр за кольорами
     @GetMapping
-    public String getAllProducts(Model model,
+    public String getAllProducts(Principal principal, Model model,
                                  @RequestParam(name = "sortByCost", required = false, defaultValue = "false") boolean sortByCost,
                                  @RequestParam(name = "sortByCostAsc", required = false, defaultValue = "true") boolean sortByCostAsc,
                                  @RequestParam(name = "sortByNewness", required = false, defaultValue = "false") boolean sortByNewness,
@@ -36,18 +35,19 @@ public class ProductController {
                                  @RequestParam(name = "priceFrom", required = false, defaultValue = "0") BigDecimal priceFrom,
                                  @RequestParam(name = "priceTo", required = false, defaultValue = "10000") BigDecimal priceTo,
                                  @RequestParam(name = "categoryId", required = false, defaultValue = "0") Long categoryId,
-                                 @RequestParam(name = "search", required = false) String search
+                                 @RequestParam(name = "search", required = false) String search,
+                                 @RequestParam(name = "colorIds", required = false) List<Long> colorIds
     ) {
         model.addAttribute("categories", categoryService.getAll());
         model.addAttribute("colors", colorService.getAll());
-        if (categoryId != 0) {
-            model.addAttribute("products", productService.getAllNotDeletedByCategoryId(categoryId));
-        } else if (search != null) {
-            model.addAttribute("products", productService.getAllNotDeletedBySearchLine(search));
+        if (search != null) {
+            model.addAttribute("products", productService.getAllNotDeletedBySearchLine(categoryId, search));
         } else {
+            model.addAttribute("categoryWasChosen", categoryId != 0);
             model.addAttribute("products",
-                    productService.getAllNotDeletedByFilter(sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc, priceFrom, priceTo));
+                    productService.getAllNotDeletedByFilter(categoryId, sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc, priceFrom, priceTo, colorIds));
         }
+        model.addAttribute("isAuthenticated", principal != null);
         return "guest/list_of_products";
     }
 
@@ -64,9 +64,11 @@ public class ProductController {
             var user = (User) userDetailsService.loadUserByUsername(principal.getName());
             List<ProductDto> recommendedDtoList = productService.getRecommendedProducts(productDto.getId(), user.getId());
             model.addAttribute("recommendedProducts", recommendedDtoList);
+            model.addAttribute("isAuthenticated", true);
         } else {
             List<ProductDto> recommendedDtoList = productService.getRecommendedProducts(productDto.getId(), null);
             model.addAttribute("recommendedProducts", recommendedDtoList);
+            model.addAttribute("isAuthenticated", false);
         }
         return "guest/product";
     }
@@ -92,8 +94,6 @@ public class ProductController {
     @PostMapping("/{id}/addToCart")
     public String addProductWithIdToCart(Principal principal, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (principal == null) {
-//            TODO: у гостя при додаванні в кошик товари зберігаються в localStorage
-//            TODO: не забути про те, що повторний клік видаляє товар з кошика
             return "redirect:/products/{id}";
         }
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());

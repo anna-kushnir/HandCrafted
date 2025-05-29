@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Злиття кошика</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/auth_and_menu.css" />
+    <link rel="stylesheet" href="/css/pages/user/merge_cart.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+    <header th:insert="layout :: header"></header>
+
+    <main>
+        <p class="label">
+            У вашому локальному кошику були товари.
+            Бажаєте перенести їх до вашого акаунту?
+        </p>
+
+        <div class="btn-container">
+            <button class="btn btn-outline-secondary" id="maybe_later_btn">
+                Поки ні
+            </button>
+            <button class="btn btn-outline-danger" id="no_btn">
+                Ні, очистити локальний кошик
+            </button>
+            <button class="btn btn-outline-primary" id="yes_btn">
+                Так
+            </button>
+        </div>
+    </main>
+</div>
+<script type="text/javascript" th:src="@{/js/user/merge_cart.js}"></script>
+</body>
+</html>

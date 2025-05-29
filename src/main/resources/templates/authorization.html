@@ -20,6 +20,12 @@
     <main>
         <p th:if="${message}" th:text="${message}" class="error-msg"></p>
 
+        <script>
+            if (localStorage.getItem("cart") && localStorage.getItem("cart") !== "[]") {
+                sessionStorage.setItem("mergeCartRequest", "true");
+            }
+        </script>
+
         <form th:action="@{/login}" method="POST" class="form-container">
             <div class="data-container">
                 <label for="username" class="label">Введіть ім'я користувача:</label>

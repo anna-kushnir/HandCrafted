@@ -13,9 +13,9 @@ public interface ProductService {
     Optional<Product> getEntityNotDeletedById(Long id);
     Optional<ProductDto> getNotDeletedById(Long id);
     List<ProductDto> getAllNotDeleted();
-    List<ProductDto> getAllNotDeletedByFilter(boolean sortByCost, boolean sortByCostAsc, boolean sortByNewness, boolean sortByNewnessAsc, BigDecimal priceFrom, BigDecimal priceTo);
+    List<ProductDto> getAllNotDeletedByFilter(Long categoryId, boolean sortByCost, boolean sortByCostAsc, boolean sortByNewness, boolean sortByNewnessAsc, BigDecimal priceFrom, BigDecimal priceTo, List<Long> colorIds);
     List<ProductDto> getAllNotDeletedByCategoryId(Long categoryId);
-    List<ProductDto> getAllNotDeletedBySearchLine(String searchLine);
+    List<ProductDto> getAllNotDeletedBySearchLine(Long categoryId, String searchLine);
 
     List<ProductDto> getRecommendedProducts(Long productId, Long userId);
 

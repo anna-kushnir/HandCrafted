@@ -1,6 +1,7 @@
 package annak.hc.service;
 
 import annak.hc.dto.ProductDto;
+import annak.hc.entity.Color;
 import annak.hc.entity.Product;
 import annak.hc.mapper.ProductMapper;
 import annak.hc.repository.ProductRepository;
@@ -26,6 +27,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryService categoryService;
     private final FavoriteProductService favoriteProductService;
     private final CartItemService cartItemService;
+    private final ColorService colorService;
 
     @Override
     public Optional<Product> getEntityById(Long id) {
@@ -58,10 +60,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getAllNotDeletedByFilter(boolean sortByCost, boolean sortByCostAsc, boolean sortByNewness, boolean sortByNewnessAsc, BigDecimal priceFrom, BigDecimal priceTo) {
+    public List<ProductDto> getAllNotDeletedByFilter(
+            Long categoryId,
+            boolean sortByCost, boolean sortByCostAsc,
+            boolean sortByNewness, boolean sortByNewnessAsc,
+            BigDecimal priceFrom, BigDecimal priceTo,
+            List<Long> colorIds) {
         Specification<Product> spec = Specification
                 .where(ProductSpecifications.notDeleted())
                 .and(ProductSpecifications.priceBetween(priceFrom, priceTo));
+
+        if (colorIds != null && !colorIds.isEmpty()) {
+            Set<Color> colors = new HashSet<>(colorService.getAllByIds(colorIds));
+            spec = spec.and(ProductSpecifications.hasColorIn(colors));
+        }
+        if (categoryId != 0) {
+            var category = categoryService.getEntityById(categoryId);
+            spec = spec.and(ProductSpecifications.hasCategory(category));
+        }
+
         List<Product> productList = productRepository.findAll(spec);
 
         Comparator<Product> comparator = null;
@@ -101,8 +118,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getAllNotDeletedBySearchLine(String searchLine) {
-        return productRepository.searchProductsBySearchLineAndDeletedIsFalse(searchLine)
+    public List<ProductDto> getAllNotDeletedBySearchLine(Long categoryId, String searchLine) {
+        return productRepository.searchProductsBySearchLineAndDeletedIsFalse(searchLine, categoryId)
                 .stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
@@ -180,9 +197,10 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> productOptional = productRepository.findByIdAndDeletedIsFalse(productDto.getId());
         if (productOptional.isEmpty())
             return "Товар з id <%s> не знайдено!".formatted(productDto.getId());
+        Product oldProduct = productOptional.get();
         Product product = productMapper.toEntity(productDto);
         product.setCategory(categoryService.getEntityById(productDto.getCategoryId()));
-        product.setCreationDate(productOptional.get().getCreationDate());
+        product.setCreationDate(oldProduct.getCreationDate());
         product.setDeleted(false);
         if (!product.isInStock()) {
             cartItemService.deleteAllByProductId(product.getId());
@@ -191,9 +209,11 @@ public class ProductServiceImpl implements ProductService {
         else if (product.getQuantity() == 0L) {
             cartItemService.deleteAllByProductId(product.getId());
             product.setInStock(false);
+        } else if (oldProduct.getQuantity() > product.getQuantity()) {
+            cartItemService.updateQuantityByProductId(product.getId(), product.getQuantity());
         }
-        product.setCanAddToGiftSet(productOptional.get().isCanAddToGiftSet());
-        product.setMaxQuantityInGiftSet(productOptional.get().getMaxQuantityInGiftSet());
+        product.setCanAddToGiftSet(oldProduct.isCanAddToGiftSet());
+        product.setMaxQuantityInGiftSet(oldProduct.getMaxQuantityInGiftSet());
         return "Товар з id <%s> було успішно оновлено".formatted(
                 productRepository.save(product).getId()
         );

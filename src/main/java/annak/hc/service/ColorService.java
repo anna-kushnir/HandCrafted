@@ -8,6 +8,7 @@ import java.util.Set;
 
 public interface ColorService {
     List<Color> getAll();
+    List<Color> getAllByIds(List<Long> colorIds);
     String convertColorsToString(Set<Color> colorsList);
     Set<Color> convertColorsToList(String colorsString);
     Map<String, Long> getColorStatistics();

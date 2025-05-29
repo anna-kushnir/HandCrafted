@@ -5,10 +5,7 @@ import annak.hc.dto.GiftSetDto;
 import annak.hc.dto.GuestCartItemDto;
 import annak.hc.dto.ProductDto;
 import annak.hc.entity.User;
-import annak.hc.service.CartItemService;
-import annak.hc.service.FavoriteProductService;
-import annak.hc.service.GiftSetService;
-import annak.hc.service.ProductService;
+import annak.hc.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -48,8 +45,15 @@ public class CartController {
     @PostMapping("/guest")
     @ResponseBody
     public List<CartItemDto> getGuestCartItems(@RequestBody List<GuestCartItemDto> items) {
-        System.out.println(items.toString());
         return cartItemService.convertGuestItemsToDto(items);
+    }
+
+
+    @PostMapping("/merge")
+    public ResponseEntity<Void> mergeCart(Principal principal, @RequestBody List<GuestCartItemDto> guestCartItems) {
+        var user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        cartItemService.mergeCartItems(user, guestCartItems);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping ("/products/{id}/deleteFromCart")

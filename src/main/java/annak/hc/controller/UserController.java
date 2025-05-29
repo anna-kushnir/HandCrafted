@@ -28,6 +28,11 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
+    @GetMapping("/merge-cart-check")
+    public String mergeCartCheckView() {
+        return "user/merge_cart";
+    }
+
     @GetMapping
     public String startPage() {
         return "redirect:/products";
