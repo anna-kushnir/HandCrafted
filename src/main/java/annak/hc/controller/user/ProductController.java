@@ -40,10 +40,10 @@ public class ProductController {
     ) {
         model.addAttribute("categories", categoryService.getAll());
         model.addAttribute("colors", colorService.getAll());
+        model.addAttribute("categoryWasChosen", categoryId != 0);
         if (search != null) {
             model.addAttribute("products", productService.getAllNotDeletedBySearchLine(categoryId, search));
         } else {
-            model.addAttribute("categoryWasChosen", categoryId != 0);
             model.addAttribute("products",
                     productService.getAllNotDeletedByFilter(categoryId, sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc, priceFrom, priceTo, colorIds));
         }

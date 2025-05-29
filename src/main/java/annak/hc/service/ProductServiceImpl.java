@@ -119,7 +119,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllNotDeletedBySearchLine(Long categoryId, String searchLine) {
-        return productRepository.searchProductsBySearchLineAndDeletedIsFalse(searchLine, categoryId)
+        List<Product> products;
+        if (categoryId != 0) {
+            products =  productRepository.searchProductsBySearchLineAndCategoryIdAndDeletedIsFalse(searchLine, categoryId);
+        } else {
+            products = productRepository.searchProductsBySearchLineAndDeletedIsFalse(searchLine);
+        }
+        return products
                 .stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
