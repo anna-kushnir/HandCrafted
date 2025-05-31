@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Створення подарункового набору</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/user/favorite_products.css" />
+    <link rel="stylesheet" href="/css/pages/user/create_gift_set.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body id="body">
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container">
+    <form class="main">
+        <div class="product-listing">
+            <label th:each="product : ${products}" class="product-card"
+                th:classappend="${!product.inStock || !product.canAddToGiftSet} ? 'disabled'"
+                th:for="'checkbox' + ${product.productId}">
+                <input
+                        th:if="${product.canAddToGiftSet && product.inStock}"
+                        type="checkbox"
+                        th:id="'checkbox' + ${product.productId}"
+                        class="product-checkbox">
+                <div class="product-img-container">
+                    <img
+                            th:src="'data:image/jpeg;base64,' + ${product.photo}"
+                            class="product-img"
+                            alt="фото товару" />
+                    <p th:if="${product.canAddToGiftSet && !product.inStock}" class="product-not-in-stock">
+                        Не в наявності
+                    </p>
+                    <p th:unless="${product.canAddToGiftSet}" class="product-not-in-stock">
+                        Не можна додати в набір
+                    </p>
+                </div>
+
+                <p th:text="${product.productName}" class="product-name"></p>
+                <p th:text="${product.price} +'₴'" class="product-price"></p>
+                <div class="quantity-container">
+                    <p>Кількість:</p>
+                    <input
+                            type="number"
+                            th:id="'quantity' + ${product.productId}"
+                            class="text-box quantity-input"
+                            min="1"
+                            th:max="${product.maxQuantity}"
+                            value="1"
+                            th:data-price="${product.price}"
+                            th:data-id="${product.productId}"
+                            disabled />
+                </div>
+            </label>
+        </div>
+
+        <div class="price-and-options-container">
+            <div class="total-price-container">
+                <p>Загальна вартість:</p>
+                <p th:text="${totalPrice} +'₴'" id="total_price"></p>
+            </div>
+            <div class="options-container">
+                <a th:href="@{/favorite}">
+                    <button type="button" class="btn btn-outline-secondary" id="cancel_btn">
+                        Скасувати
+                    </button>
+                </a>
+                <button type="button" class="btn btn-outline-primary" id="continue_btn">
+                    Продовжити
+                </button>
+            </div>
+        </div>
+    </form>
+</main>
+<script th:inline="javascript">const wrapPrice = [[${wrapPrice}]];</script>
+<script src="/js/user/create_gift_set.js"></script>
+</body>
+</html>

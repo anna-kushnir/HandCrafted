@@ -31,7 +31,7 @@ public class GiftSetItem {
     @Column(name = "QUANTITY")
     private Long quantity;
 
-    // TODO: при кожному перегляді кошика та створенні замовлення - потрібно оновити це поле актуальною ціною
+    // Дане поле встановлюється лише при створенні замовлення
     @Column(name = "PRODUCT_COST")
     private BigDecimal productCost;
 }

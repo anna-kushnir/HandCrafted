@@ -5,6 +5,7 @@ import annak.hc.dto.GiftSetDto;
 import annak.hc.dto.GuestCartItemDto;
 import annak.hc.dto.ProductDto;
 import annak.hc.entity.CartItem;
+import annak.hc.entity.GiftSet;
 import annak.hc.entity.Product;
 import annak.hc.entity.User;
 import annak.hc.exception.ResourceNotFoundException;
@@ -52,16 +53,31 @@ public class CartItemServiceImpl implements CartItemService {
             cartItemRepository.deleteByUserUserNameAndProductId(user.getUsername(), productDto.getId());
             return "Товар видалено з кошика";
         }
-        if (productDto.isInStock()) {
-            CartItem cartItem = new CartItem();
-            cartItem.setProduct(productMapper.toEntity(productDto));
-            cartItem.setUser(user);
-            cartItem.setQuantityInCart(1L);
-
-            cartItemRepository.save(cartItem);
-            return "Товар додано до кошика";
+        if (!productDto.isInStock()) {
+            return "Товару немає в наявності";
         }
-        return "Товару немає в наявності";
+        CartItem cartItem = new CartItem();
+        cartItem.setProduct(productMapper.toEntity(productDto));
+        cartItem.setUser(user);
+        cartItem.setQuantityInCart(1L);
+
+        cartItemRepository.save(cartItem);
+        return "Товар додано до кошика";
+    }
+
+    @Override
+    @Transactional
+    public String saveGiftSet(GiftSet giftSet) {
+        if (cartItemRepository.existsByUserUserNameAndGiftSetId(giftSet.getUser().getUsername(), giftSet.getId())) {
+            return "Подарунковий набір вже є в кошику";
+        }
+        CartItem cartItem = new CartItem();
+        cartItem.setGiftSet(giftSet);
+        cartItem.setUser(giftSet.getUser());
+        cartItem.setQuantityInCart(1L);
+
+        cartItemRepository.save(cartItem);
+        return "Подарунковий набір додано до кошика";
     }
 
     @Override

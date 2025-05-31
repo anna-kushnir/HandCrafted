@@ -14,4 +14,5 @@ public class GiftSetDto {
     private Long id;
     private List<GiftSetItemDto> items;
     private BigDecimal totalPrice;
+    private String packagingWishes;
 }

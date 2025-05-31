@@ -57,9 +57,11 @@
 
 <!--        TODO: реалізувати створення подарункових наборів -->
         <div th:unless="${favoriteProducts.isEmpty()}" class="create-gift-set-container">
-            <button class="btn btn-outline-primary" id="create_gift_set_btn">
-                Створити подарунковий набір
-            </button>
+            <a th:href="@{/giftSets/new}">
+                <button class="btn btn-outline-primary" id="create_gift_set_btn">
+                    Створити подарунковий набір
+                </button>
+            </a>
         </div>
     </div>
 </main>

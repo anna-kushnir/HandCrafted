@@ -102,22 +102,6 @@
     max-height: 150px;
 }
 
-/* TODO CHECK: Врахувати, що для подарункового набору показується не одне фото, а до чотирьох */
-
-.gift-set-img-container {
-    height: 150px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-}
-.gift-set-img {
-    align-self: center;
-    margin: 0;
-    width: 70px;
-    height: auto;
-    max-height: 70px;
-}
-
 .product-info-container {
     display: flex;
     flex-direction: column;

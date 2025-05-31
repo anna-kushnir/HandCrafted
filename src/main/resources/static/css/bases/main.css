@@ -3,9 +3,9 @@ body {
     justify-content: flex-start;
 }
 
-.main-container {
+/*.main-container {
     margin-bottom: 40px;
-}
+}*/
 
 /* ------- Logo ------- */
 
@@ -118,7 +118,6 @@ body {
     flex-direction: column;
     margin: 5px;
     padding: 10px;
-    height: min-content;
     border: 1px solid #21003a;
     border-radius: 2px;
 }

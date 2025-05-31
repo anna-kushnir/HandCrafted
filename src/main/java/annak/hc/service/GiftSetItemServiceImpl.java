@@ -1,10 +1,9 @@
 package annak.hc.service;
 
-import annak.hc.dto.GiftSetItemDto;
+import annak.hc.dto.NewGiftSetItemDto;
 import annak.hc.dto.ProductDto;
 import annak.hc.entity.GiftSet;
 import annak.hc.entity.GiftSetItem;
-import annak.hc.mapper.GiftSetItemMapper;
 import annak.hc.mapper.ProductMapper;
 import annak.hc.repository.GiftSetItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +23,14 @@ public class GiftSetItemServiceImpl implements GiftSetItemService {
 
     @Override
     @Transactional
-    public GiftSetItem save(GiftSet giftSet, GiftSetItemDto giftSetItemDto) {
-        Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(giftSetItemDto.getProductId());
+    public GiftSetItem save(GiftSet giftSet, NewGiftSetItemDto newGiftSetItemDto) {
+        Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(newGiftSetItemDto.getProductId());
         if (productDtoOptional.isPresent()) {
             ProductDto productDto = productDtoOptional.get();
             var giftSetItem = new GiftSetItem();
             giftSetItem.setGiftSet(giftSet);
             giftSetItem.setProduct(productMapper.toEntity(productDto));
-            giftSetItem.setQuantity(giftSetItemDto.getQuantity());
-            giftSetItem.setProductCost(productDto.isWithDiscount() ?
-                    productDto.getDiscountedPrice() : productDto.getPrice());
+            giftSetItem.setQuantity(newGiftSetItemDto.getQuantity());
             giftSetItem.setId(giftSetItemRepository.save(giftSetItem).getId());
             return giftSetItem;
         }

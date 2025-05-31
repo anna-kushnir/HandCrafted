@@ -2,15 +2,14 @@ package annak.hc.service;
 
 import annak.hc.dto.*;
 import annak.hc.entity.GiftSet;
+import annak.hc.entity.User;
 import annak.hc.mapper.GiftSetMapper;
 import annak.hc.repository.GiftSetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,25 +34,25 @@ public class GiftSetServiceImpl implements GiftSetService {
 
     @Override
     @Transactional
-    public String save(NewGiftSetDto newGiftSetDto, List<GiftSetItemDto> giftSetItemDtoList) {
-        GiftSet giftSet = giftSetMapper.toEntity(newGiftSetDto);
-        giftSet.setFormationDate(LocalDateTime.now());
+    public GiftSet save(User user, NewGiftSetDto newGiftSetDto) {
+        var giftSet = new GiftSet(
+                null,
+                user,
+                LocalDateTime.now(),
+                newGiftSetDto.getPackagingWishes(),
+                null,
+                null
+        );
         giftSet.setId(giftSetRepository.save(giftSet).getId());
 
-        BigDecimal totalCost = BigDecimal.ZERO;
-
-        for (GiftSetItemDto giftSetItemDto : giftSetItemDtoList) {
-            var giftSetItem = giftSetItemService.save(giftSet, giftSetItemDto);
+        for (var newGiftSetItem : newGiftSetDto.getItems()) {
+            var giftSetItem = giftSetItemService.save(giftSet, newGiftSetItem);
             if (giftSetItem == null) {
-                return "Не вдалося створити подарунковий набір, оскільки не всі товари було знайдено";
+                giftSetRepository.delete(giftSet);
+                return null;
             }
-            totalCost = totalCost.add(giftSetItem.getProductCost());
         }
-
-        giftSet.setPrice(totalCost);
-        giftSetRepository.save(giftSet);
-
-        return "Подарунковий набір успішно збережено та додано до кошика";
+        return giftSetRepository.findById(giftSet.getId()).orElseThrow();
     }
 
     @Override

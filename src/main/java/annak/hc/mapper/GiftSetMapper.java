@@ -41,7 +41,6 @@ public class GiftSetMapper {
 
     public GiftSet toEntity(NewGiftSetDto newGiftSetDto) {
         GiftSet giftSet = new GiftSet();
-        giftSet.setUser(newGiftSetDto.getUser());
         giftSet.setPackagingWishes(newGiftSetDto.getPackagingWishes());
         return giftSet;
     }

@@ -32,7 +32,7 @@ public class CartItemMapper {
         } else if (cartItem.getGiftSet() != null) {
             cartItemDto.setGiftSet(true);
             cartItemDto.setGiftSetId(cartItem.getGiftSet().getId());
-            cartItemDto.setName("Подарунковий набір");
+            cartItemDto.setName("Подарунковий набір (" + cartItem.getGiftSet().getItems().size() + ")");
             List<String> photos = cartItem.getGiftSet().getItems().stream()
                     .flatMap(item -> {
                         List<ProductPhoto> images = item.getProduct().getPhotos();

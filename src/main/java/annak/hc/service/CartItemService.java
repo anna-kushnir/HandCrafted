@@ -5,6 +5,7 @@ import annak.hc.dto.GiftSetDto;
 import annak.hc.dto.GuestCartItemDto;
 import annak.hc.dto.ProductDto;
 import annak.hc.entity.CartItem;
+import annak.hc.entity.GiftSet;
 import annak.hc.entity.User;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public interface CartItemService {
     List<CartItemDto> getAllByUser(User user);
 
     String saveOrDeleteIfExists(User user, ProductDto productDto);
+    String saveGiftSet(GiftSet giftSet);
     void deleteById(Long id);
     void delete(User user, ProductDto productDto);
     void delete(User user, GiftSetDto giftSetDto);

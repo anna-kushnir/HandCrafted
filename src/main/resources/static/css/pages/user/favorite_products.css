@@ -15,6 +15,10 @@
 /* ------- Product list ------- */
 
 .product-listing {
+    margin: 10px auto;
+}
+
+.product-listing {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 @media screen and (max-width: 1300px) {
@@ -61,14 +65,6 @@
     display: flex;
 }
 
-.product-img {
-    align-self: center;
-    margin: 0;
-    width: 150px;
-    height: auto;
-    max-height: 150px;
-}
-
 .product-not-in-stock {
     position: absolute;
     bottom: 5px;
@@ -89,6 +85,7 @@
 }
 
 .product-name {
+    margin-top: 5px;
     font-size: 14px;
 }
 

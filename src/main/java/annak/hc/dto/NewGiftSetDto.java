@@ -1,10 +1,11 @@
 package annak.hc.dto;
 
-import annak.hc.entity.User;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class NewGiftSetDto {
-    private User user;
+    private List<NewGiftSetItemDto> items;
     private String packagingWishes;
 }

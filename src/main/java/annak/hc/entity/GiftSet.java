@@ -32,7 +32,7 @@ public class GiftSet {
     @Column(name = "PACKAGING_WISHES")
     private String packagingWishes;
 
-    // TODO: при кожному перегляді кошика та створенні замовлення - потрібно оновити це поле актуальною вартістю
+    // Дане поле встановлюється лише при створенні замовлення
     @Column(name = "PRICE")
     private BigDecimal price;
 

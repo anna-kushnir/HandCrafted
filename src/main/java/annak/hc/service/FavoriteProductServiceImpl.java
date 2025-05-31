@@ -1,6 +1,7 @@
 package annak.hc.service;
 
 import annak.hc.dto.FavoriteProductDto;
+import annak.hc.dto.FavoriteProductToGiftSetDto;
 import annak.hc.dto.ProductDto;
 import annak.hc.entity.FavoriteProduct;
 import annak.hc.entity.User;
@@ -28,6 +29,14 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         return favoriteProductRepository.findAllByUser(user)
                 .stream()
                 .map(favoriteProductMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FavoriteProductToGiftSetDto> getAllForGiftSetByUser(User user) {
+        return favoriteProductRepository.findAllByUser(user)
+                .stream()
+                .map(favoriteProductMapper::toGiftSetDTO)
                 .collect(Collectors.toList());
     }
 

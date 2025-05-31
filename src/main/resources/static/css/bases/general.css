@@ -247,3 +247,27 @@ a {
     margin: 10px;
     height: min-content;
 }
+
+.product-img {
+    align-self: center;
+    margin: 0;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.gift-set-img-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 5px;
+    padding: 5px;
+    border: 1px solid black;
+}
+.gift-set-img {
+    align-self: center;
+    margin: 0;
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}

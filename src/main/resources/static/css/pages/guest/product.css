@@ -41,7 +41,8 @@
 .product-photo {
     margin: 10px;
     width: 300px;
-    height: auto;
+    height: 300px;
+    object-fit: contain;
 }
 
 .photo-nav-arrow {
