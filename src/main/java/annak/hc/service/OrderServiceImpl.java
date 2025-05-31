@@ -7,11 +7,14 @@ import annak.hc.entity.User;
 import annak.hc.entity.embedded.DeliveryAddress;
 import annak.hc.entity.embedded.Status;
 import annak.hc.entity.embedded.TypeOfReceipt;
+import annak.hc.exception.ResourceNotFoundException;
 import annak.hc.mapper.OrderMapper;
 import annak.hc.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +30,9 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final CartItemService cartItemService;
     private final OrderItemService orderItemService;
+
+    private final GiftSetService giftSetService;
+    private final GiftSetItemService giftSetItemService;
 
     @Override
     public List<OrderDto> getAllByUser(User user) {
@@ -59,8 +65,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public String save(NewOrderDto newOrderDto, List<CartItemDto> cartItemDtoList) {
         Order order = orderMapper.toEntity(newOrderDto);
+        for (CartItemDto cartItemDto : cartItemDtoList) {
+            if (cartItemDto.isGiftSet()) {
+                BigDecimal totalGiftSetPrice = giftSetService.setPriceForGiftSetAndItsItems(cartItemDto.getGiftSetId());
+                cartItemDto.setCost(totalGiftSetPrice);
+            }
+        }
         order.setPrice(cartItemService.getTotalPriceOfItemsInCart(cartItemDtoList));
         order.setFormationDate(LocalDateTime.now());
         order.setStatus(Status.IN_PROCESSING);
@@ -74,26 +87,45 @@ public class OrderServiceImpl implements OrderService {
         order.setId(orderRepository.save(order).getId());
 
         for (CartItemDto cartItemDto : cartItemDtoList) {
-            Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(cartItemDto.getProductId());
-            if (productDtoOptional.isPresent()) {
-                ProductDto productDto = productDtoOptional.get();
-                if (!(cartItemDto.getQuantityInCart() <= productDto.getQuantity())) {
-                    return "Недостатньо товарів з id <%s>!".formatted(productDto.getId());
+            Optional<CartItem> cartItemOptional = cartItemService.getById(cartItemDto.getId());
+            if (cartItemOptional.isEmpty()) {
+                throw new ResourceNotFoundException("В кошику під id <%s> нічого не знайдено!".formatted(cartItemDto.getId()));
+            }
+
+            if (cartItemDto.isGiftSet()) {
+                for (var giftSetItem : giftSetItemService.getAllByGiftSetId(cartItemDto.getGiftSetId())) {
+                    ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(giftSetItem.getProduct().getId(), giftSetItem.getQuantity());
+                    if (!(giftSetItem.getQuantity() <= productDto.getMaxQuantityInGiftSet())) {
+                        throw new ResourceNotFoundException("В подарунковий набір не можна додати таку кількість товару з id <%s>!".formatted(productDto.getId()));
+                    }
+                    productDto.setQuantity(productDto.getQuantity() - giftSetItem.getQuantity());
+                    productDto.setInStock(productDto.getQuantity() != 0);
+                    productService.update(productDto);
                 }
-                Optional<CartItem> cartItemOptional = cartItemService.getById(cartItemDto.getId());
-                if (cartItemOptional.isEmpty()) {
-                    return "Товар з id <%s> не було знайдено в кошику!".formatted(cartItemDto.getId());
-                }
+                orderItemService.save(order, cartItemOptional.get());
+                cartItemService.deleteById(cartItemDto.getId());
+            } else {
+                ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(cartItemDto.getProductId(), cartItemDto.getQuantityInCart());
                 orderItemService.save(order, cartItemOptional.get());
                 cartItemService.deleteById(cartItemDto.getId());
                 productDto.setQuantity(productDto.getQuantity() - cartItemDto.getQuantityInCart());
                 productDto.setInStock(productDto.getQuantity() != 0);
                 productService.update(productDto);
-            } else {
-                return "Товар з id <%s> не було знайдено!".formatted(cartItemDto.getProductId());
             }
         }
         return "Замовлення було успішно створено під номером <%s>".formatted(order.getId());
+    }
+
+    private ProductDto getProductDtoAndCheckQuantityOrElseThrow(Long productId, Long itemQuantity) {
+        Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(productId);
+        if (productDtoOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Товар з id <%s> не було знайдено!".formatted(productId));
+        }
+        var productDto = productDtoOptional.get();
+        if (!(itemQuantity <= productDto.getQuantity())) {
+            throw new ResourceNotFoundException("Недостатньо товарів з id <%s>!".formatted(productDto.getId()));
+        }
+        return productDto;
     }
 
     @Override

@@ -50,14 +50,15 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItem.setItemCost(product.isWithDiscount() ? product.getDiscountedPrice() : product.getPrice());
         } else if (cartItem.getGiftSet() != null) {
             orderItem.setGiftSet(cartItem.getGiftSet());
+            //        TODO: налаштувати зміну цієї вартості або десь записати як глобальну змінну
+            BigDecimal wrapPrice = BigDecimal.valueOf(50);
             BigDecimal giftSetPrice = cartItem.getGiftSet().getItems().stream()
                     .map(i -> (
                             i.getProduct().isWithDiscount() ?
                                     i.getProduct().getDiscountedPrice() :
-                                    i.getProduct().getPrice()
-                    )
+                                    i.getProduct().getPrice())
                             .multiply(BigDecimal.valueOf(i.getQuantity())))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(BigDecimal.ZERO, BigDecimal::add).add(wrapPrice);
             orderItem.setItemCost(giftSetPrice);
         }
         orderItem.setQuantityInOrder(cartItem.getQuantityInCart());

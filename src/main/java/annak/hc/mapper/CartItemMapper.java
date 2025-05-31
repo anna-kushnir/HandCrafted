@@ -42,6 +42,8 @@ public class CartItemMapper {
                     .collect(Collectors.toList());
             cartItemDto.setPhotos(photos);
 
+            //        TODO: налаштувати зміну цієї вартості або десь записати як глобальну змінну
+            BigDecimal wrapPrice = BigDecimal.valueOf(50);
             BigDecimal total = cartItem.getGiftSet().getItems().stream()
                     .map(item ->
                             (item.getProduct().isWithDiscount() ?
@@ -49,7 +51,7 @@ public class CartItemMapper {
                                     item.getProduct().getPrice())
                                     .multiply(BigDecimal.valueOf(item.getQuantity()))
                     )
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(BigDecimal.ZERO, BigDecimal::add).add(wrapPrice);
             cartItemDto.setCost(total);
         }
 

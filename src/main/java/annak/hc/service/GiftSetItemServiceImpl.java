@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,11 @@ public class GiftSetItemServiceImpl implements GiftSetItemService {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+
+    @Override
+    public List<GiftSetItem> getAllByGiftSetId(Long gifSetId) {
+        return giftSetItemRepository.findAllByGiftSetId(gifSetId);
+    }
 
     @Override
     @Transactional
@@ -35,6 +41,11 @@ public class GiftSetItemServiceImpl implements GiftSetItemService {
             return giftSetItem;
         }
         return null;
+    }
+
+    @Override
+    public GiftSetItem update(GiftSetItem giftSetItem) {
+        return giftSetItemRepository.save(giftSetItem);
     }
 
     @Override

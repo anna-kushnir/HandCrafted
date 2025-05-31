@@ -8,8 +8,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Table(name = "ORDER", schema = "HANDCRAFTED_SCHEMA")
@@ -63,9 +61,9 @@ public class Order {
     private String orderComments;
 
 //    TODO: перевірити, чи треба цей список, чи може треба додати ще giftSets
-    @ElementCollection
-    @CollectionTable(schema = "HANDCRAFTED_SCHEMA", name = "ORDER_ITEM", joinColumns = @JoinColumn(name = "ORDER_ID"))
-    @Column(name = "QUANTITY")
-    @MapKeyJoinColumn(table = "ORDER_ITEM", name = "PRODUCT_ID")
-    private Map<Product, Long> products = new HashMap<>();
+//    @ElementCollection
+//    @CollectionTable(schema = "HANDCRAFTED_SCHEMA", name = "ORDER_ITEM", joinColumns = @JoinColumn(name = "ORDER_ID"))
+//    @Column(name = "QUANTITY")
+//    @MapKeyJoinColumn(table = "ORDER_ITEM", name = "PRODUCT_ID")
+//    private Map<Product, Long> products = new HashMap<>();
 }

@@ -23,7 +23,6 @@ public class OrderItem {
     @JoinColumn(name = "ORDER_ID")
     private Order order;
 
-    // TODO: перевіряти, щоб був вказаний або лише товар, або лише набір
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
