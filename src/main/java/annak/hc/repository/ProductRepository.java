@@ -50,29 +50,66 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     List<Product> searchProductsBySearchLineAndCategoryIdAndDeletedIsFalse(@Param("keyword") String searchLine, @Param("categoryId") long categoryId);
 
     @Query("""
-            SELECT DISTINCT oi.product
-            FROM OrderItem oi
-            WHERE oi.order.user.id <> :userId
-                AND oi.product.id <> :productId
-                AND oi.order IN (
-                    SELECT o FROM Order o
-                    JOIN OrderItem oi2 ON o = oi2.order
-                    WHERE oi2.product.id = :productId
+            SELECT DISTINCT p
+            FROM Product p
+            WHERE p.id <> :productId
+                AND p.deleted = false
+                AND (
+                    p IN (
+                        SELECT oi.product FROM OrderItem oi
+                        WHERE oi.order.user.id <> :userId
+                            AND oi.product.id <> :productId
+                            AND oi.order IN (
+                                SELECT oi2.order FROM OrderItem oi2
+                                LEFT JOIN oi2.giftSet.items gsi
+                                WHERE oi2.product.id = :productId
+                                    OR gsi.product.id = :productId
+                            )
                     )
-                AND NOT oi.product.deleted
+                    OR p IN (
+                        SELECT gsi.product FROM OrderItem oi
+                        JOIN oi.giftSet.items gsi
+                        WHERE oi.order.user.id <> :userId
+                            AND gsi.product.id <> :productId
+                            AND oi.order IN (
+                                SELECT oi2.order FROM OrderItem oi2
+                                LEFT JOIN oi2.giftSet.items gsi2
+                                WHERE oi2.product.id = :productId
+                                    OR gsi2.product.id = :productId
+                            )
+                    )
+                )
             """)
     List<Product> getFrequentlyBoughtTogetherWithUserId(@Param("productId") Long productId, @Param("userId") Long userId, Pageable pageable);
 
     @Query("""
-            SELECT DISTINCT oi.product
-            FROM OrderItem oi
-            WHERE oi.product.id <> :productId
-                AND oi.order IN (
-                    SELECT o FROM Order o
-                    JOIN OrderItem oi2 ON o = oi2.order
-                    WHERE oi2.product.id = :productId
+            SELECT DISTINCT p
+            FROM Product p
+            WHERE p.id <> :productId
+                AND p.deleted = false
+                AND (
+                    p IN (
+                        SELECT oi.product FROM OrderItem oi
+                        WHERE oi.product.id <> :productId
+                            AND oi.order IN (
+                                SELECT oi2.order FROM OrderItem oi2
+                                LEFT JOIN oi2.giftSet.items gsi
+                                WHERE oi2.product.id = :productId
+                                    OR gsi.product.id = :productId
+                            )
                     )
-                AND NOT oi.product.deleted
+                    OR p IN (
+                        SELECT gsi.product FROM OrderItem oi
+                        JOIN oi.giftSet.items gsi
+                        WHERE gsi.product.id <> :productId
+                            AND oi.order IN (
+                                SELECT oi2.order FROM OrderItem oi2
+                                LEFT JOIN oi2.giftSet.items gsi2
+                                WHERE oi2.product.id = :productId
+                                    OR gsi2.product.id = :productId
+                            )
+                    )
+                )
             """)
     List<Product> getFrequentlyBoughtTogether(@Param("productId") Long productId, Pageable pageable);
 
