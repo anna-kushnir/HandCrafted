@@ -28,6 +28,16 @@ public class GiftSetItemServiceImpl implements GiftSetItemService {
     }
 
     @Override
+    public List<GiftSetItem> getAllByProductId(Long productId) {
+        return giftSetItemRepository.findAllByProductId(productId);
+    }
+
+    @Override
+    public List<GiftSetItem> getAllNotOrderedByProductId(Long productId) {
+        return giftSetItemRepository.findAllByProductIdAndProductCostIsNull(productId);
+    }
+
+    @Override
     @Transactional
     public GiftSetItem save(GiftSet giftSet, NewGiftSetItemDto newGiftSetItemDto) {
         Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(newGiftSetItemDto.getProductId());

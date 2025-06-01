@@ -40,7 +40,7 @@ public class OrderItemMapper {
         } else if (orderItem.getGiftSet() != null) {
             orderItemDto.setGiftSet(true);
             orderItemDto.setGiftSetId(orderItem.getGiftSet().getId());
-            orderItemDto.setName("Подарунковий набір");
+            orderItemDto.setName("Подарунковий набір (" + orderItem.getGiftSet().getItems().size() + ")");
             List<String> photos = orderItem.getGiftSet().getItems().stream()
                     .flatMap(item -> {
                         List<ProductPhoto> images = item.getProduct().getPhotos();

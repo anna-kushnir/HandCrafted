@@ -4,6 +4,8 @@ import annak.hc.dto.ProductDto;
 import annak.hc.entity.Color;
 import annak.hc.entity.Product;
 import annak.hc.mapper.ProductMapper;
+import annak.hc.repository.GiftSetItemRepository;
+import annak.hc.repository.GiftSetRepository;
 import annak.hc.repository.ProductRepository;
 import annak.hc.repository.spec.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,9 @@ public class ProductServiceImpl implements ProductService {
     private final FavoriteProductService favoriteProductService;
     private final CartItemService cartItemService;
     private final ColorService colorService;
+
+    private final GiftSetRepository giftSetRepository;
+    private final GiftSetItemRepository giftSetItemRepository;
 
     @Override
     public Optional<Product> getEntityById(Long id) {
@@ -208,15 +213,22 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(categoryService.getEntityById(productDto.getCategoryId()));
         product.setCreationDate(oldProduct.getCreationDate());
         product.setDeleted(false);
-        if (!product.isInStock()) {
+        if (!product.isInStock() || product.getQuantity() == 0L) {
             cartItemService.deleteAllByProductId(product.getId());
+            for (var giftSetItem : giftSetItemRepository.findAllByProductIdAndProductCostIsNull(product.getId())) {
+                giftSetItemRepository.deleteAllByGiftSetId(giftSetItem.getGiftSet().getId());
+                giftSetRepository.deleteById(giftSetItem.getGiftSet().getId());
+            }
             product.setQuantity(0L);
-        }
-        else if (product.getQuantity() == 0L) {
-            cartItemService.deleteAllByProductId(product.getId());
             product.setInStock(false);
         } else if (oldProduct.getQuantity() > product.getQuantity()) {
             cartItemService.updateQuantityByProductId(product.getId(), product.getQuantity());
+            for (var giftSetItem : giftSetItemRepository.findAllByProductIdAndProductCostIsNull(product.getId())) {
+                if (giftSetItem.getQuantity() > product.getQuantity()) {
+                    giftSetItemRepository.deleteAllByGiftSetId(giftSetItem.getGiftSet().getId());
+                    giftSetRepository.deleteById(giftSetItem.getGiftSet().getId());
+                }
+            }
         }
         product.setCanAddToGiftSet(oldProduct.isCanAddToGiftSet());
         product.setMaxQuantityInGiftSet(oldProduct.getMaxQuantityInGiftSet());

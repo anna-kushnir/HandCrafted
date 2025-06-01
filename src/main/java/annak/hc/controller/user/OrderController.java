@@ -84,7 +84,6 @@ public class OrderController {
         return "redirect:/orders";
     }
 
-//    TODO: додати повернення товарів з giftSet в наявність
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> cancelOrderById(@PathVariable Long id, Principal principal) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());

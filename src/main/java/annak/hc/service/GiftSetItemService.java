@@ -9,6 +9,8 @@ import java.util.List;
 public interface GiftSetItemService {
 
     List<GiftSetItem> getAllByGiftSetId(Long gifSetId);
+    List<GiftSetItem> getAllByProductId(Long productId);
+    List<GiftSetItem> getAllNotOrderedByProductId(Long productId);
 
     GiftSetItem save(GiftSet giftSet, NewGiftSetItemDto newGiftSetItemDto);
     GiftSetItem update(GiftSetItem giftSetItem);

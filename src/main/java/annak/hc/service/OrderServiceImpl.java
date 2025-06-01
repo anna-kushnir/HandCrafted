@@ -88,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (CartItemDto cartItemDto : cartItemDtoList) {
             Optional<CartItem> cartItemOptional = cartItemService.getById(cartItemDto.getId());
+//            Чомусь видавало помилку
             if (cartItemOptional.isEmpty()) {
                 throw new ResourceNotFoundException("В кошику під id <%s> нічого не знайдено!".formatted(cartItemDto.getId()));
             }

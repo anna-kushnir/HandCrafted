@@ -1,10 +1,7 @@
 package annak.hc.service;
 
 import annak.hc.dto.OrderItemDto;
-import annak.hc.entity.CartItem;
-import annak.hc.entity.Order;
-import annak.hc.entity.OrderItem;
-import annak.hc.entity.Product;
+import annak.hc.entity.*;
 import annak.hc.mapper.OrderItemMapper;
 import annak.hc.mapper.ProductMapper;
 import annak.hc.repository.OrderItemRepository;
@@ -25,6 +22,8 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final GiftSetItemService giftSetItemService;
+    private final GiftSetService giftSetService;
 
     @Override
     public List<OrderItem> getAllByOrderId(Long orderId) {
@@ -78,6 +77,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
+    @Transactional
     public void returnProductsFromOrderToStockByOrderId(Long orderId) {
         List<OrderItem> orderItemList = getAllByOrderId(orderId);
         for (OrderItem orderItem : orderItemList) {
@@ -86,9 +86,19 @@ public class OrderItemServiceImpl implements OrderItemService {
                 product.setQuantity(product.getQuantity() + orderItem.getQuantityInOrder());
                 product.setInStock(true);
                 productService.update(productMapper.toDto(product));
+            } else if (orderItem.getGiftSet() != null) {
+                for (GiftSetItem giftSetItem : orderItem.getGiftSet().getItems()) {
+                    Product product = giftSetItem.getProduct();
+                    product.setQuantity(product.getQuantity() + giftSetItem.getQuantity());
+                    product.setInStock(true);
+                    productService.update(productMapper.toDto(product));
+                }
             }
-//            TODO: врахувати повернення товарів з подарункових наборів
             orderItemRepository.delete(orderItem);
+            if (orderItem.getGiftSet() != null) {
+                giftSetItemService.deleteAllByGiftSetId(orderItem.getGiftSet().getId());
+                giftSetService.deleteById(orderItem.getGiftSet().getId());
+            }
         }
     }
 }
