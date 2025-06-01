@@ -40,7 +40,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public List<CartItemDto> getAllByUser(User user) {
-        return cartItemRepository.findAllByUser(user)
+        return cartItemRepository.findAllByUserOrderById(user)
                 .stream()
                 .map(cartItemMapper::toDto)
                 .collect(Collectors.toList());
