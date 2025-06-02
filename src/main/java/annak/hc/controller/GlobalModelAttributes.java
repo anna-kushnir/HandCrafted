@@ -1,11 +1,13 @@
 package annak.hc.controller;
 
+import annak.hc.config.GlobalVariables;
 import annak.hc.entity.ShopContact;
 import annak.hc.service.ShopContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @ControllerAdvice
@@ -20,7 +22,7 @@ public class GlobalModelAttributes {
     }
 
     @ModelAttribute("wrapPrice")
-    public long getWrapPrice() {
-        return 50;
+    public BigDecimal getWrapPrice() {
+        return GlobalVariables.WRAP_PRICE;
     }
 }

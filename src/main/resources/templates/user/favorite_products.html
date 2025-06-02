@@ -55,7 +55,6 @@
 
         <div th:if="${favoriteProducts.isEmpty()}" class="empty-msg">Вподобаних товарів ще немає</div>
 
-<!--        TODO: реалізувати створення подарункових наборів -->
         <div th:unless="${favoriteProducts.isEmpty()}" class="create-gift-set-container">
             <a th:href="@{/giftSets/new}">
                 <button class="btn btn-outline-primary" id="create_gift_set_btn">

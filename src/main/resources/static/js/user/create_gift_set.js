@@ -4,8 +4,6 @@ const quantityInputs = document.getElementsByClassName("quantity-input");
 const continueBtn = document.getElementById("continue_btn");
 const form = document.querySelector("form");
 
-const url = "/giftSets/";
-
 body.addEventListener("change", (event) => {
     for (let cb of productCheckboxes) {
         if (cb.contains(event.target)) {

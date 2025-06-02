@@ -15,9 +15,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     List<Product> findAllByCategoryIdAndDeletedIsFalse(Long categoryId);
 
-    // TODO: налаштувати сортування за кольорами
-//    List<Product> findAllByColorsContainsAndDeletedIsFalse(Set<Color> colors);
-
     Optional<Product> findByIdAndDeletedIsFalse(Long id);
 
     @Query("""

@@ -1,5 +1,6 @@
 package annak.hc.service;
 
+import annak.hc.config.GlobalVariables;
 import annak.hc.dto.OrderItemDto;
 import annak.hc.entity.*;
 import annak.hc.mapper.OrderItemMapper;
@@ -55,8 +56,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             orderItem.setItemCost(product.isWithDiscount() ? product.getDiscountedPrice() : product.getPrice());
         } else if (cartItem.getGiftSet() != null) {
             orderItem.setGiftSet(cartItem.getGiftSet());
-            //        TODO: налаштувати зміну цієї вартості або десь записати як глобальну змінну
-            BigDecimal wrapPrice = BigDecimal.valueOf(50);
+            BigDecimal wrapPrice = GlobalVariables.WRAP_PRICE;
             BigDecimal giftSetPrice = cartItem.getGiftSet().getItems().stream()
                     .map(i -> (
                             i.getProduct().isWithDiscount() ?

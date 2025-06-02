@@ -1,5 +1,6 @@
 package annak.hc.service;
 
+import annak.hc.config.GlobalVariables;
 import annak.hc.dto.*;
 import annak.hc.entity.GiftSet;
 import annak.hc.entity.GiftSetItem;
@@ -57,8 +58,7 @@ public class GiftSetServiceImpl implements GiftSetService {
             totalPrice = totalPrice.add(giftSetItem.getProductCost().multiply(BigDecimal.valueOf(giftSetItem.getQuantity())));
         }
 
-//        TODO: налаштувати зміну цієї вартості або десь записати як глобальну змінну
-        BigDecimal wrapPrice = BigDecimal.valueOf(50);
+        BigDecimal wrapPrice = GlobalVariables.WRAP_PRICE;
         giftSet.setPrice(totalPrice.add(wrapPrice));
         giftSetRepository.save(giftSet);
         return giftSet.getPrice();

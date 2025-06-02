@@ -26,7 +26,7 @@ public class OrderItemMapper {
     public OrderItemDto toDTO(OrderItem orderItem) {
         OrderItemDto orderItemDto = new OrderItemDto();
         orderItemDto.setId(orderItem.getId());
-        orderItemDto.setOrder(orderItem.getOrder());                    // TODO: видалити, якщо не знадобиться
+        orderItemDto.setOrder(orderItem.getOrder());
         orderItemDto.setQuantityInOrder(orderItem.getQuantityInOrder());
 
         if (orderItem.getProduct() != null) {

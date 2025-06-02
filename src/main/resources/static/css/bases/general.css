@@ -109,8 +109,7 @@ a {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 0;
-    margin-right: 40px;
+    margin: 0 40px 0 0;
 }
 
 .logo-text {

@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class OrderItemDto {
     private Long id;
-    private Order order;            // TODO: видалити, якщо не знадобиться
+    private Order order;
     private String name;            // назва товару або "Подарунковий набір"
     private BigDecimal cost;        // ціна товару або подарункового набору
     private Long quantityInOrder;

@@ -59,11 +59,4 @@ public class Order {
 
     @Column(name = "ORDER_COMMENTS")
     private String orderComments;
-
-//    TODO: перевірити, чи треба цей список, чи може треба додати ще giftSets
-//    @ElementCollection
-//    @CollectionTable(schema = "HANDCRAFTED_SCHEMA", name = "ORDER_ITEM", joinColumns = @JoinColumn(name = "ORDER_ID"))
-//    @Column(name = "QUANTITY")
-//    @MapKeyJoinColumn(table = "ORDER_ITEM", name = "PRODUCT_ID")
-//    private Map<Product, Long> products = new HashMap<>();
 }

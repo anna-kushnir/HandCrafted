@@ -21,7 +21,6 @@ public class CartItem {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    // TODO: перевіряти, щоб був вказаний або лише товар, або лише набір
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;

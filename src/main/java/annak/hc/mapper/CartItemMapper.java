@@ -1,5 +1,6 @@
 package annak.hc.mapper;
 
+import annak.hc.config.GlobalVariables;
 import annak.hc.dto.CartItemDto;
 import annak.hc.entity.CartItem;
 import annak.hc.entity.ProductPhoto;
@@ -42,8 +43,7 @@ public class CartItemMapper {
                     .collect(Collectors.toList());
             cartItemDto.setPhotos(photos);
 
-            //        TODO: налаштувати зміну цієї вартості або десь записати як глобальну змінну
-            BigDecimal wrapPrice = BigDecimal.valueOf(50);
+            BigDecimal wrapPrice = GlobalVariables.WRAP_PRICE;
             BigDecimal total = cartItem.getGiftSet().getItems().stream()
                     .map(item ->
                             (item.getProduct().isWithDiscount() ?

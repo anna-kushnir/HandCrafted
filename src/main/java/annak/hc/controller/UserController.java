@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/")
@@ -57,6 +58,10 @@ public class UserController {
         try {
             if (!newUserDto.getPassword().equals(newUserDto.getSubmitPassword())) {
                 throw new Exception("Паролі не співпадають");
+            }
+            Pattern passwordPattern = Pattern.compile("^(?=.*[A-ZА-ЯІЇЄ])(?=.*[a-zа-яіїє])(?=.*\\d)[A-Za-zА-Яа-яІіЇїЄє\\d]{8,16}$");
+            if (!passwordPattern.matcher(newUserDto.getPassword()).matches()) {
+                throw new Exception("Пароль не відповідає шаблону");
             }
             newUserDto.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
             newUserDto.setSubmitPassword(passwordEncoder.encode(newUserDto.getSubmitPassword()));
