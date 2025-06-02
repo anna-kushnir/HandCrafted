@@ -37,6 +37,7 @@ public class OrderItemMapper {
             orderItemDto.setCost(orderItem.getProduct().isWithDiscount() ?
                     orderItem.getProduct().getDiscountedPrice() :
                     orderItem.getProduct().getPrice());
+            orderItemDto.setHasDeletedProduct(orderItem.getProduct().isDeleted());
         } else if (orderItem.getGiftSet() != null) {
             orderItemDto.setGiftSet(true);
             orderItemDto.setGiftSetId(orderItem.getGiftSet().getId());

@@ -57,6 +57,9 @@ body {
     border: none;
     cursor: pointer;
 }
+.back-btn {
+    margin: 15px 0;
+}
 .menu-btn > p {
     font-family: var(--text-font), sans-serif;
     font-size: 16px;

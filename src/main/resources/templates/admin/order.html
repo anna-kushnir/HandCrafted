@@ -135,26 +135,36 @@
             <p class="label">Замовлені товари:</p>
 
             <div class="product-listing">
-                <div th:each="orderItem : ${orderItems}" class="product-card">
-                    <div th:if="${!orderItem.giftSet and !orderItem.photos.isEmpty()}" class="product-img-container">
+                <div th:each="item : ${orderItems}" class="product-card">
+                    <div th:if="${!item.giftSet and !item.photos.isEmpty()}" class="product-img-container">
+                        <a th:if="${!item.hasDeletedProduct}" th:href="@{/products/{id}(id=${item.productId})}">
+                            <img
+                                    th:src="'data:image/jpeg;base64,' + ${item.photos.get(0)}"
+                                    class="product-img"
+                                    alt="фото товару" />
+                        </a>
                         <img
-                                th:src="'data:image/jpeg;base64,' + ${orderItem.photos.get(0)}"
+                                th:if="${item.hasDeletedProduct}"
+                                th:src="'data:image/jpeg;base64,' + ${item.photos.get(0)}"
                                 class="product-img"
                                 alt="фото товару" />
                     </div>
 
-                    <div th:if="${orderItem.giftSet and !orderItem.photos.isEmpty()}" class="gift-set-img-container">
-                        <img
-                                th:each="photo : ${orderItem.photos}"
+                    <div th:if="${item.giftSet and !item.photos.isEmpty()}">
+                        <a th:href="@{/admin/orders/{orderId}/giftSets/{giftSetId}(orderId=${order.id},giftSetId=${item.giftSetId})}"
+                           class="gift-set-img-container">
+                            <img
+                                th:each="photo : ${item.photos}"
                                 th:src="'data:image/jpeg;base64,' + ${photo}"
                                 class="gift-set-img"
                                 alt="фото товару в подарунковому наборі" />
+                        </a>
                     </div>
 
                     <div class="product-info-container">
-                        <p th:text="${orderItem.name}"></p>
-                        <p th:text="'Ціна: ' +${orderItem.cost} +'₴'"></p>
-                        <p th:text="'Кількість: ' + ${orderItem.quantityInOrder}"></p>
+                        <p th:text="${item.name}"></p>
+                        <p th:text="'Ціна: ' +${item.cost} +'₴'"></p>
+                        <p th:text="'Кількість: ' + ${item.quantityInOrder}"></p>
                     </div>
                 </div>
             </div>

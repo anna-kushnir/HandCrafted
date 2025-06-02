@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,11 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .stream()
                 .map(orderItemMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<OrderItem> getByOrderIdAndGiftSetId(Long orderId, Long giftSetId) {
+        return orderItemRepository.findByOrderIdAndGiftSetId(orderId, giftSetId);
     }
 
     @Override

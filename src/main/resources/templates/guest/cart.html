@@ -36,18 +36,19 @@
                         </a>
                     </div>
 
-                    <div th:if="${cartItem.giftSet and !cartItem.photos.isEmpty()}" class="gift-set-img-container">
-                        <img
-                                th:each="photo : ${cartItem.photos}"
-                                th:src="'data:image/jpeg;base64,' + ${photo}"
-                                class="gift-set-img"
-                                alt="фото товару в подарунковому наборі" />
+                    <div th:if="${cartItem.giftSet and !cartItem.photos.isEmpty()}">
+                        <a th:href="@{/cart/giftSets/{id}(id=${cartItem.giftSetId})}" class="gift-set-img-container">
+                            <img
+                                    th:each="photo : ${cartItem.photos}"
+                                    th:src="'data:image/jpeg;base64,' + ${photo}"
+                                    class="gift-set-img"
+                                    alt="фото товару в подарунковому наборі" />
+                        </a>
                     </div>
 
                     <div class="product-info-container">
                         <p th:text="${cartItem.name}"></p>
                         <p th:text="'Ціна: ' +${cartItem.cost} +'₴'"></p>
-                        <!-- TODO CHECK: для подарункових наборів кількість змінювати не можна -->
                         <div th:unless="${cartItem.giftSet}" class="quantity-container">
                             <p>Кількість:</p>
                             <input
@@ -64,7 +65,6 @@
                 <div class="product-options-container">
                     <button th:unless="${cartItem.isGiftSet()}" class="btn btn-outline-secondary remove-btn" th:id="'product' + ${cartItem.productId}">Видалити</button>
                     <button th:if="${cartItem.isGiftSet()}" class="btn btn-outline-secondary remove-btn" th:id="'giftset' + ${cartItem.giftSetId}">Видалити</button>
-<!--                    TODO CHECK: подарунковий набір не можна додати у вподобане -->
                     <button th:unless="${cartItem.isGiftSet()}" class="btn btn-outline-secondary transfer-to-fav-btn" th:id="${cartItem.productId}">Перенести у вподобане</button>
                 </div>
             </div>

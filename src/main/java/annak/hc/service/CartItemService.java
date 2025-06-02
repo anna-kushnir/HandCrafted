@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public interface CartItemService {
     Optional<CartItem> getById(Long id);
+    Optional<CartItem> getByUserAndGiftSetId(User user, Long giftSetId);
     List<CartItemDto> getAllByUser(User user);
 
     String saveOrDeleteIfExists(User user, ProductDto productDto);

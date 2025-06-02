@@ -76,18 +76,28 @@
             <div class="product-listing">
                 <div th:each="item : ${orderItems}" class="product-card">
                     <div th:if="${!item.giftSet and !item.photos.isEmpty()}" class="product-img-container">
+                        <a th:if="${!item.hasDeletedProduct}" th:href="@{/products/{id}(id=${item.productId})}">
+                            <img
+                                    th:src="'data:image/jpeg;base64,' + ${item.photos.get(0)}"
+                                    class="product-img"
+                                alt="фото товару" />
+                        </a>
                         <img
+                                th:if="${item.hasDeletedProduct}"
                                 th:src="'data:image/jpeg;base64,' + ${item.photos.get(0)}"
                                 class="product-img"
                                 alt="фото товару" />
                     </div>
 
-                    <div th:if="${item.giftSet and !item.photos.isEmpty()}" class="gift-set-img-container">
-                        <img
-                                th:each="photo : ${item.photos}"
-                                th:src="'data:image/jpeg;base64,' + ${photo}"
-                                class="gift-set-img"
-                                alt="фото товару в подарунковому наборі" />
+                    <div th:if="${item.giftSet and !item.photos.isEmpty()}">
+                        <a th:href="@{/orders/{orderId}/giftSets/{giftSetId}(orderId=${order.id},giftSetId=${item.giftSetId})}"
+                           class="gift-set-img-container">
+                            <img
+                                    th:each="photo : ${item.photos}"
+                                    th:src="'data:image/jpeg;base64,' + ${photo}"
+                                    class="gift-set-img"
+                                    alt="фото товару в подарунковому наборі" />
+                        </a>
                     </div>
 
                     <div class="product-info-container">

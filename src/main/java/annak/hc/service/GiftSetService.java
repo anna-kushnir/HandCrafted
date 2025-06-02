@@ -3,9 +3,11 @@ package annak.hc.service;
 import annak.hc.dto.GiftSetDto;
 import annak.hc.dto.NewGiftSetDto;
 import annak.hc.entity.GiftSet;
+import annak.hc.entity.GiftSetItem;
 import annak.hc.entity.User;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface GiftSetService {
@@ -13,6 +15,7 @@ public interface GiftSetService {
     Optional<GiftSet> getEntityById(Long id);
 
     BigDecimal setPriceForGiftSetAndItsItems(Long giftSetId);
+    BigDecimal countTotalPriceForItems(List<GiftSetItem> items);
 
     GiftSet save(User user, NewGiftSetDto newGiftSetDto);
     GiftSet update(GiftSet giftSet);

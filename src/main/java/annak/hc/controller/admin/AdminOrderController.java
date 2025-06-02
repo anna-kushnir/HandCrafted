@@ -2,6 +2,7 @@ package annak.hc.controller.admin;
 
 import annak.hc.dto.OrderDto;
 import annak.hc.entity.embedded.Status;
+import annak.hc.service.GiftSetService;
 import annak.hc.service.OrderItemService;
 import annak.hc.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class AdminOrderController {
 
     private final OrderService orderService;
     private final OrderItemService orderItemService;
+    private final GiftSetService giftSetService;
 
     @GetMapping
     public String getMenuWithOrderStatuses(Model model) {
@@ -51,6 +53,31 @@ public class AdminOrderController {
         return "redirect:/admin/orders/{statusName}";
     }
 
+    @GetMapping("/{orderId}/giftSets/{giftSetId}")
+    public String getGiftSetInOrder(@PathVariable Long orderId, @PathVariable Long giftSetId,
+                                    Model model, RedirectAttributes redirectAttributes) {
+        Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
+        if (orderDtoOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Замовлення №%s не було знайдено!".formatted(orderId));
+            return "redirect:/orders";
+        }
+        var giftSetOptional = giftSetService.getEntityById(giftSetId);
+        if (giftSetOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
+            return "redirect:/orders";
+        }
+        if (orderItemService.getByOrderIdAndGiftSetId(orderId, giftSetId).isEmpty()) {
+            redirectAttributes.addFlashAttribute("message",
+                    "Подарунковий набір з id <%s> не належить до замовлення з id <%s>!".formatted(giftSetId, orderId));
+            return "redirect:/orders";
+        }
+        var giftSet = giftSetOptional.get();
+        model.addAttribute("giftSet", giftSet);
+        model.addAttribute("items", giftSet.getItems());
+        model.addAttribute("totalPrice", giftSet.getPrice());
+        return "gift_set";
+    }
+
     @PutMapping("/{id}/acceptOrderWithPickup")
     public ResponseEntity<?> acceptOrderWithPickup(@PathVariable Long id, @RequestBody LocalDateTime receiptDate) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
@@ -62,7 +89,7 @@ public class AdminOrderController {
 
         orderDto.setReceiptDate(receiptDate);
         orderDto.setStatus(Status.ACCEPTED);
-        orderService.update(orderDto, orderItemService.getAllDtosByOrderId(orderDto.getId()));
+        orderService.update(orderDto);
         return ResponseEntity.ok().build();
     }
 
@@ -76,7 +103,7 @@ public class AdminOrderController {
             return ResponseEntity.badRequest().build();
 
         orderDto.setStatus(Status.ACCEPTED);
-        orderService.update(orderDto, orderItemService.getAllDtosByOrderId(orderDto.getId()));
+        orderService.update(orderDto);
         return ResponseEntity.ok().build();
     }
 
@@ -104,7 +131,7 @@ public class AdminOrderController {
 
         orderDto.setInvoiceNumber(invoiceNumber);
         orderDto.setStatus(Status.FORWARDED_FOR_DELIVERY);
-        orderService.update(orderDto, orderItemService.getAllDtosByOrderId(orderDto.getId()));
+        orderService.update(orderDto);
         return ResponseEntity.ok().build();
     }
 
@@ -119,7 +146,7 @@ public class AdminOrderController {
             return ResponseEntity.badRequest().build();
 
         orderDto.setStatus(Status.RECEIVED);
-        orderService.update(orderDto, orderItemService.getAllDtosByOrderId(orderDto.getId()));
+        orderService.update(orderDto);
         return ResponseEntity.ok().build();
     }
 

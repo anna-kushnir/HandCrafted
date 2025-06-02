@@ -2,6 +2,7 @@ package annak.hc.service;
 
 import annak.hc.dto.*;
 import annak.hc.entity.GiftSet;
+import annak.hc.entity.GiftSetItem;
 import annak.hc.entity.User;
 import annak.hc.exception.ResourceNotFoundException;
 import annak.hc.mapper.GiftSetMapper;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -60,6 +62,15 @@ public class GiftSetServiceImpl implements GiftSetService {
         giftSet.setPrice(totalPrice.add(wrapPrice));
         giftSetRepository.save(giftSet);
         return giftSet.getPrice();
+    }
+
+    @Override
+    public BigDecimal countTotalPriceForItems(List<GiftSetItem> items) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (var item : items) {
+            totalPrice = totalPrice.add(item.getProductCost().multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+        return totalPrice;
     }
 
     @Override

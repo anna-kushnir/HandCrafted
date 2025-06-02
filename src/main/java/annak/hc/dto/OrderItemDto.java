@@ -14,6 +14,7 @@ public class OrderItemDto {
     private BigDecimal cost;        // ціна товару або подарункового набору
     private Long quantityInOrder;
     private List<String> photos;    // 1 фото, якщо це товар, і більше, якщо це набір
+    private boolean hasDeletedProduct;
     private boolean isGiftSet;
 
     private Long productId;

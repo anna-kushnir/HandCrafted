@@ -39,6 +39,11 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    public Optional<CartItem> getByUserAndGiftSetId(User user, Long giftSetId) {
+        return cartItemRepository.findByUserAndGiftSetId(user, giftSetId);
+    }
+
+    @Override
     public List<CartItemDto> getAllByUser(User user) {
         return cartItemRepository.findAllByUserOrderById(user)
                 .stream()

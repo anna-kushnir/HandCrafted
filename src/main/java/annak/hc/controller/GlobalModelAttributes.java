@@ -18,4 +18,9 @@ public class GlobalModelAttributes {
     public List<ShopContact> getShopContacts() {
         return shopContactService.getAll();
     }
+
+    @ModelAttribute("wrapPrice")
+    public long getWrapPrice() {
+        return 50;
+    }
 }

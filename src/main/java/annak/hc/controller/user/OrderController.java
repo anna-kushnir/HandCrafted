@@ -6,6 +6,7 @@ import annak.hc.dto.OrderDto;
 import annak.hc.entity.User;
 import annak.hc.entity.embedded.TypeOfReceipt;
 import annak.hc.service.CartItemService;
+import annak.hc.service.GiftSetService;
 import annak.hc.service.OrderItemService;
 import annak.hc.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class OrderController {
     private final OrderService orderService;
     private final CartItemService cartItemService;
     private final OrderItemService orderItemService;
+    private final GiftSetService giftSetService;
 
     @GetMapping
     public String getAllOrders(Principal principal, Model model) {
@@ -54,6 +56,37 @@ public class OrderController {
         model.addAttribute("order", orderDto);
         model.addAttribute("orderItems", orderItemService.getAllDtosByOrderId(orderDto.getId()));
         return "user/order";
+    }
+
+    @GetMapping("/{orderId}/giftSets/{giftSetId}")
+    public String getGiftSetInOrder(Principal principal, @PathVariable Long orderId, @PathVariable Long giftSetId,
+                                    Model model, RedirectAttributes redirectAttributes) {
+        var user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
+        if (orderDtoOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Замовлення №%s не було знайдено!".formatted(orderId));
+            return "redirect:/orders";
+        }
+        OrderDto orderDto = orderDtoOptional.get();
+        if (!user.equals(orderDto.getUser())) {
+            redirectAttributes.addFlashAttribute("message", "Ви можете переглянути лише свої власні замовлення!");
+            return "redirect:/orders";
+        }
+        var giftSetOptional = giftSetService.getEntityById(giftSetId);
+        if (giftSetOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
+            return "redirect:/orders";
+        }
+        if (orderItemService.getByOrderIdAndGiftSetId(orderId, giftSetId).isEmpty()) {
+            redirectAttributes.addFlashAttribute("message",
+                    "Подарунковий набір з id <%s> не належить до замовлення з id <%s>!".formatted(giftSetId, orderId));
+            return "redirect:/orders";
+        }
+        var giftSet = giftSetOptional.get();
+        model.addAttribute("giftSet", giftSet);
+        model.addAttribute("items", giftSet.getItems());
+        model.addAttribute("totalPrice", giftSet.getPrice());
+        return "gift_set";
     }
 
     @GetMapping("/new")

@@ -16,7 +16,7 @@
             <button class="btn btn-outline-primary" id="contact_btn" onclick="openContacts()">Контакти</button>
             <ul class="contact-list" id="contact_list" style="display: none;">
                 <li th:each="contact : ${shopContacts}"
-                    th:text="${contact.name.getName() + ': ' + (contact.value != null ? contact.value : 'не вказано')}">
+                    th:text="${contact.name.getName() + ': ' + (contact.value != null && contact.value != '' ? contact.value : 'не вказано')}">
                 </li>
             </ul>
         </div>

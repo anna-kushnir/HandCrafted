@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -40,6 +41,30 @@ public class CartController {
             model.addAttribute("isAuthenticated", false);
         }
         return "guest/cart";
+    }
+
+    @GetMapping("/giftSets/{id}")
+    public String getGiftSetInCart(Principal principal, @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        var giftSetOptional = giftSetService.getEntityById(id);
+        if (giftSetOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Подарунковий набір з id <%s> не знайдено!".formatted(id));
+            return "redirect:/cart";
+        }
+        var user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        if (cartItemService.getByUserAndGiftSetId(user, id).isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Ви можете переглянути лише власні подарункові набори!");
+            return "redirect:/cart";
+        }
+        var giftSet = giftSetOptional.get();
+        for (var giftSetItem : giftSet.getItems()) {
+            giftSetItem.setProductCost(giftSetItem.getProduct().isWithDiscount() ?
+                    giftSetItem.getProduct().getDiscountedPrice() :
+                    giftSetItem.getProduct().getPrice());
+        }
+        model.addAttribute("giftSet", giftSet);
+        model.addAttribute("items", giftSet.getItems());
+        model.addAttribute("itemsPrice", giftSetService.countTotalPriceForItems(giftSet.getItems()));
+        return "gift_set";
     }
 
     @PostMapping("/guest")

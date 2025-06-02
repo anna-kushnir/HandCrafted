@@ -64,6 +64,18 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderMapper::toDTO);
     }
 
+    private ProductDto getProductDtoAndCheckQuantityOrElseThrow(Long productId, Long itemQuantity) {
+        Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(productId);
+        if (productDtoOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Товар з id <%s> не було знайдено!".formatted(productId));
+        }
+        var productDto = productDtoOptional.get();
+        if (!(itemQuantity <= productDto.getQuantity())) {
+            throw new ResourceNotFoundException("Недостатньо товарів з id <%s>!".formatted(productDto.getId()));
+        }
+        return productDto;
+    }
+
     @Override
     @Transactional
     public String save(NewOrderDto newOrderDto, List<CartItemDto> cartItemDtoList) {
@@ -88,7 +100,6 @@ public class OrderServiceImpl implements OrderService {
 
         for (CartItemDto cartItemDto : cartItemDtoList) {
             Optional<CartItem> cartItemOptional = cartItemService.getById(cartItemDto.getId());
-//            Чомусь видавало помилку
             if (cartItemOptional.isEmpty()) {
                 throw new ResourceNotFoundException("В кошику під id <%s> нічого не знайдено!".formatted(cartItemDto.getId()));
             }
@@ -117,23 +128,10 @@ public class OrderServiceImpl implements OrderService {
         return "Замовлення було успішно створено під номером <%s>".formatted(order.getId());
     }
 
-    private ProductDto getProductDtoAndCheckQuantityOrElseThrow(Long productId, Long itemQuantity) {
-        Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(productId);
-        if (productDtoOptional.isEmpty()) {
-            throw new ResourceNotFoundException("Товар з id <%s> не було знайдено!".formatted(productId));
-        }
-        var productDto = productDtoOptional.get();
-        if (!(itemQuantity <= productDto.getQuantity())) {
-            throw new ResourceNotFoundException("Недостатньо товарів з id <%s>!".formatted(productDto.getId()));
-        }
-        return productDto;
-    }
-
     @Override
-    public String update(OrderDto orderDto, List<OrderItemDto> orderItemDtoList) {
+    public String update(OrderDto orderDto) {
         Order order = orderMapper.toEntity(orderDto);
         orderRepository.save(order);
-        orderItemService.saveAll(order, orderItemDtoList);
         return "Замовлення №%s було успішно оновлено".formatted(orderDto.getId());
     }
 

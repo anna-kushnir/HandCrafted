@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandCrafted: Подарунковий набір</title>
+    <link rel="stylesheet" href="/css/bases/general.css" />
+    <link rel="stylesheet" href="/css/bases/main.css" />
+    <link rel="stylesheet" href="/css/pages/user/favorite_products.css" />
+    <link rel="stylesheet" href="/css/pages/user/create_gift_set.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pacifico&display=swap"
+            rel="stylesheet" />
+</head>
+<body id="body">
+<header th:insert="layout :: header"></header>
+
+<main class="container main-container2">
+    <div class="header">
+        <div class="header-menu-left">
+            <button class="back-btn" id="back_btn" onclick="goBack()">
+                <img
+                        id="back_icon"
+                        src="/icons/back_icon1.png"
+                        width="20px"
+                        height="20px"
+                        alt="кнопка повернення" />
+            </button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="product-listing">
+            <div th:each="item : ${items}">
+                <a th:href="@{/products/{id}(id=${item.product.id})}">
+                    <div class="product-card">
+                        <div class="product-img-container">
+                            <img
+                                    th:src="'data:image/jpeg;base64,' + ${item.product.photos.get(0).photo}"
+                                    class="product-img"
+                                    alt="фото товару" />
+                        </div>
+                        <p th:text="${item.product.name}" class="product-name"></p>
+                        <div class="product-price-container">
+                            <p th:text="${item.productCost} +'₴'" class="product-price"></p>
+                        </div>
+                        <div class="quantity-container">
+                            <p th:text="'Кількість: ' + ${item.quantity}" class="product-quantity"></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="gift-set-info-container">
+            <div class="wish-container">
+                <p th:if="${giftSet.packagingWishes != ''}" th:text="'Побажання до пакування: ' + ${giftSet.packagingWishes}"></p>
+                <p th:if="${giftSet.packagingWishes == ''}">Побажань до пакування немає</p>
+            </div>
+            <div class="gift-set-price-container">
+                <p th:if="${itemsPrice}" th:text="'Загальна вартість товарів: ' + ${itemsPrice} + '₴ + Вартість пакування: ' + ${wrapPrice} + '₴'"></p>
+                <p th:if="${totalPrice}" th:text="'Загальна вартість товарів: ' + ${totalPrice - wrapPrice} + '₴ + Вартість пакування: ' + ${wrapPrice} + '₴'"></p>
+            </div>
+            <div class="price-and-options-container">
+                <div class="total-price-container">
+                    <p th:if="${itemsPrice}" th:text="'Вартість набору: ' + ${itemsPrice + wrapPrice} + '₴'"></p>
+                    <p th:if="${totalPrice}" th:text="'Вартість набору: ' + ${totalPrice} + '₴'"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:inline="javascript">const wrapPrice = [[${wrapPrice}]];</script>
+<script src="/js/go_back.js"></script>
+</body>
+</html>
