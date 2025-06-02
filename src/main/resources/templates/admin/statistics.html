@@ -53,7 +53,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="color : ${colorStatistics}">
+            <tr th:each="color : ${colorStatistics}" th:if="${color.getValue() > 1}">
                 <th th:text="${color.getKey()}"></th>
                 <td th:text="${color.getValue()}"></td>
             </tr>

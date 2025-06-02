@@ -15,8 +15,26 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         """)
     List<Category> findAllOrderByNameAscAndOthersLast();
 
-    @Query("SELECT c.name AS categoryName, COUNT(oi.id) AS countInOrders " +
-            "FROM OrderItem oi JOIN oi.product p JOIN p.category c " +
-            "GROUP BY c.name ORDER BY countInOrders DESC")
+    @Query("""
+            SELECT stats.categoryName AS categoryName, SUM(stats.countInOrders) AS totalCountInOrders
+            FROM (
+                SELECT c.name AS categoryName, COUNT(oi.id) AS countInOrders
+                FROM OrderItem oi
+                JOIN oi.product p JOIN p.category c
+                WHERE oi.product IS NOT NULL
+                GROUP BY c.name
+        
+                UNION ALL
+        
+                SELECT c2.name AS categoryName, COUNT(gsi.id) AS countInOrders
+                FROM OrderItem oi2
+                JOIN oi2.giftSet gs JOIN gs.items gsi
+                JOIN gsi.product p2 JOIN p2.category c2
+                WHERE oi2.giftSet IS NOT NULL
+                GROUP BY c2.name
+            ) stats
+            GROUP BY stats.categoryName
+            ORDER BY totalCountInOrders DESC
+        """)
     List<Object[]> getCategoryStatistics();
 }
