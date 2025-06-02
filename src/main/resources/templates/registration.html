@@ -68,8 +68,10 @@
                         class="text-box"
                         id="password"
                         placeholder="password"
-                        minlength="6"
-                        maxlength="12"
+                        minlength="8"
+                        maxlength="16"
+                        pattern="^(?=.*[A-ZА-ЯІЇЄ])(?=.*[a-zа-яіїє])(?=.*\d)[A-Za-zА-Яа-яІіЇїЄє\d]{8,16}$"
+                        title="Пароль має містити від 8 до 16 символів, включаючи хоча б одну велику і малу літеру та хоча б одну цифру."
                         required />
 
                 <label for="submitPassword" class="label">Повторіть пароль:</label>
@@ -80,8 +82,10 @@
                         class="text-box"
                         id="submitPassword"
                         placeholder="password"
-                        minlength="6"
-                        maxlength="12"
+                        minlength="8"
+                        maxlength="16"
+                        pattern="^(?=.*[A-ZА-ЯІЇЄ])(?=.*[a-zа-яіїє])(?=.*\d)[A-Za-zА-Яа-яІіЇїЄє\d]{8,16}$"
+                        title="Пароль має містити від 8 до 16 символів, включаючи хоча б одну велику і малу літеру та хоча б одну цифру."
                         required />
             </div>
 
