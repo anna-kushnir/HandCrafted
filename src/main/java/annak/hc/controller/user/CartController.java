@@ -82,7 +82,7 @@ public class CartController {
     }
 
     @DeleteMapping ("/products/{id}/deleteFromCart")
-    public ResponseEntity<?> deleteProductWithIdFromCart(Principal principal, @PathVariable Long id) {
+    public ResponseEntity<Void> deleteProductWithIdFromCart(Principal principal, @PathVariable Long id) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<ProductDto> productDtoOptional = productService.getNotDeletedById(id);
         if (productDtoOptional.isPresent()) {
@@ -95,7 +95,7 @@ public class CartController {
     }
 
     @DeleteMapping ("/giftSets/{id}/deleteFromCart")
-    public ResponseEntity<?> deleteGiftSetWithIdFromCart(Principal principal, @PathVariable Long id) {
+    public ResponseEntity<Void> deleteGiftSetWithIdFromCart(Principal principal, @PathVariable Long id) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<GiftSetDto> giftSetDtoOptional = giftSetService.getById(id);
         if (giftSetDtoOptional.isPresent()) {
@@ -109,7 +109,7 @@ public class CartController {
     }
 
     @PutMapping ("/products/{id}/transferToFavorite")
-    public ResponseEntity<?> transferProductWithIdToFavorite(Principal principal, @PathVariable Long id) {
+    public ResponseEntity<Void> transferProductWithIdToFavorite(Principal principal, @PathVariable Long id) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<ProductDto> productDtoOptional = productService.getById(id);
         if (productDtoOptional.isPresent()) {
@@ -122,7 +122,7 @@ public class CartController {
     }
 
     @PutMapping ("/products/{id}/updateQuantity/{quantity}")
-    public ResponseEntity<?> updateQuantity(Principal principal, @PathVariable Long id, @PathVariable Long quantity) {
+    public ResponseEntity<Void> updateQuantity(Principal principal, @PathVariable Long id, @PathVariable Long quantity) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<ProductDto> productDtoOptional = productService.getById(id);
         if (productDtoOptional.isPresent()) {

@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
+import static annak.hc.config.GlobalVariables.IS_AUTHENTICATED;
+import static annak.hc.config.GlobalVariables.MESSAGE;
+
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -47,7 +50,7 @@ public class ProductController {
             model.addAttribute("products",
                     productService.getAllNotDeletedByFilter(categoryId, sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc, priceFrom, priceTo, colorIds));
         }
-        model.addAttribute("isAuthenticated", principal != null);
+        model.addAttribute(IS_AUTHENTICATED, principal != null);
         return "guest/list_of_products";
     }
 
@@ -55,7 +58,7 @@ public class ProductController {
     public String getProductById(Principal principal, @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         var productDtoOptional = productService.getNotDeletedById(id);
         if (productDtoOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Товар з id <%s> не було знайдено".formatted(id));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Товар з id <%s> не було знайдено".formatted(id));
             return "redirect:/products";
         }
         var productDto = productDtoOptional.get();
@@ -64,11 +67,11 @@ public class ProductController {
             var user = (User) userDetailsService.loadUserByUsername(principal.getName());
             List<ProductDto> recommendedDtoList = productService.getRecommendedProducts(productDto.getId(), user.getId());
             model.addAttribute("recommendedProducts", recommendedDtoList);
-            model.addAttribute("isAuthenticated", true);
+            model.addAttribute(IS_AUTHENTICATED, true);
         } else {
             List<ProductDto> recommendedDtoList = productService.getRecommendedProducts(productDto.getId(), null);
             model.addAttribute("recommendedProducts", recommendedDtoList);
-            model.addAttribute("isAuthenticated", false);
+            model.addAttribute(IS_AUTHENTICATED, false);
         }
         return "guest/product";
     }

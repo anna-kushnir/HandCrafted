@@ -5,6 +5,7 @@ import annak.hc.dto.NewOrderDto;
 import annak.hc.dto.OrderDto;
 import annak.hc.entity.User;
 import annak.hc.entity.embedded.TypeOfReceipt;
+import annak.hc.exception.ResourceNotFoundException;
 import annak.hc.service.CartItemService;
 import annak.hc.service.GiftSetService;
 import annak.hc.service.OrderItemService;
@@ -21,6 +22,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static annak.hc.config.GlobalVariables.MESSAGE;
+import static annak.hc.config.GlobalVariables.ORDERS;
+
 @Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -36,7 +40,7 @@ public class OrderController {
     public String getAllOrders(Principal principal, Model model) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         List<OrderDto> orderDtoList = orderService.getAllByUser(user);
-        model.addAttribute("orders", orderDtoList);
+        model.addAttribute(ORDERS, orderDtoList);
         return "user/list_of_orders";
     }
 
@@ -45,12 +49,12 @@ public class OrderController {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Замовлення №%s не було знайдено!".formatted(id));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(id));
             return "redirect:/orders";
         }
         OrderDto orderDto = orderDtoOptional.get();
         if (!user.equals(orderDto.getUser())) {
-            redirectAttributes.addFlashAttribute("message", "Ви можете переглянути лише свої власні замовлення!");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Ви можете переглянути лише свої власні замовлення!");
             return "redirect:/orders";
         }
         model.addAttribute("order", orderDto);
@@ -64,21 +68,21 @@ public class OrderController {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
         if (orderDtoOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Замовлення №%s не було знайдено!".formatted(orderId));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(orderId));
             return "redirect:/orders";
         }
         OrderDto orderDto = orderDtoOptional.get();
         if (!user.equals(orderDto.getUser())) {
-            redirectAttributes.addFlashAttribute("message", "Ви можете переглянути лише свої власні замовлення!");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Ви можете переглянути лише свої власні замовлення!");
             return "redirect:/orders";
         }
         var giftSetOptional = giftSetService.getEntityById(giftSetId);
         if (giftSetOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
             return "redirect:/orders";
         }
         if (orderItemService.getByOrderIdAndGiftSetId(orderId, giftSetId).isEmpty()) {
-            redirectAttributes.addFlashAttribute("message",
+            redirectAttributes.addFlashAttribute(MESSAGE,
                     "Подарунковий набір з id <%s> не належить до замовлення з id <%s>!".formatted(giftSetId, orderId));
             return "redirect:/orders";
         }
@@ -112,13 +116,18 @@ public class OrderController {
     public String createOrder(Principal principal, @ModelAttribute("order") NewOrderDto newOrderDto, RedirectAttributes redirectAttributes) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         newOrderDto.setUser(user);
-        String result = orderService.save(newOrderDto, cartItemService.getAllByUser(user));
-        redirectAttributes.addFlashAttribute("message", result);
-        return "redirect:/orders";
+        try {
+            String result = orderService.save(newOrderDto, cartItemService.getAllByUser(user));
+            redirectAttributes.addFlashAttribute(MESSAGE, result);
+            return "redirect:/orders";
+        } catch (ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
+            return "redirect:/cart";
+        }
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<?> cancelOrderById(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<Void> cancelOrderById(@PathVariable Long id, Principal principal) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty()) {

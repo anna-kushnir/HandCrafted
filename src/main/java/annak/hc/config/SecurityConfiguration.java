@@ -22,7 +22,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) -> requests
+                .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/login*", "/register")
                         .anonymous()
                         .requestMatchers("/css/**", "/js/**", "/icons/**",
@@ -33,13 +33,13 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .hasAnyAuthority("ADMIN", "USER")
                 )
-                .formLogin((form) -> form
+                .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/products", true)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
-                .logout((logout) -> logout
+                .logout(logout -> logout
                         .logoutSuccessUrl("/products")
                         .deleteCookies("JSESSIONID")
                         .permitAll()

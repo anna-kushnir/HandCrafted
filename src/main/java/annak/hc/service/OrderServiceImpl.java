@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByUserOrderByFormationDate(user)
                 .stream()
                 .map(orderMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -47,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByStatusOrderByFormationDate(Status.valueOf(statusName.toUpperCase()))
                 .stream()
                 .map(orderMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -55,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByUserPhoneOrderByFormationDate(userPhone)
                 .stream()
                 .map(orderMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -70,8 +69,8 @@ public class OrderServiceImpl implements OrderService {
             throw new ResourceNotFoundException("Товар з id <%s> не було знайдено!".formatted(productId));
         }
         var productDto = productDtoOptional.get();
-        if (!(itemQuantity <= productDto.getQuantity())) {
-            throw new ResourceNotFoundException("Недостатньо товарів з id <%s>!".formatted(productDto.getId()));
+        if (itemQuantity > productDto.getQuantity()) {
+            throw new ResourceNotFoundException("Недостатньо товару \"%s\" (id=%s)!".formatted(productDto.getName(), productDto.getId()));
         }
         return productDto;
     }
@@ -107,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
             if (cartItemDto.isGiftSet()) {
                 for (var giftSetItem : giftSetItemService.getAllByGiftSetId(cartItemDto.getGiftSetId())) {
                     ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(giftSetItem.getProduct().getId(), giftSetItem.getQuantity());
-                    if (!(giftSetItem.getQuantity() <= productDto.getMaxQuantityInGiftSet())) {
+                    if (giftSetItem.getQuantity() > productDto.getMaxQuantityInGiftSet()) {
                         throw new ResourceNotFoundException("В подарунковий набір не можна додати таку кількість товару з id <%s>!".formatted(productDto.getId()));
                     }
                     productDto.setQuantity(productDto.getQuantity() - giftSetItem.getQuantity());

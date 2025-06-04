@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +47,7 @@ public class CartItemServiceImpl implements CartItemService {
         return cartItemRepository.findAllByUserOrderById(user)
                 .stream()
                 .map(cartItemMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

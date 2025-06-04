@@ -15,6 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static annak.hc.config.GlobalVariables.MESSAGE;
+import static annak.hc.config.GlobalVariables.ORDERS;
+
 @Controller
 @RequestMapping("/admin/orders")
 @RequiredArgsConstructor
@@ -33,7 +36,7 @@ public class AdminOrderController {
     @GetMapping("/{statusName}")
     public String getAllOrdersByStatus(@PathVariable String statusName, Model model) {
         model.addAttribute("status_name", statusName);
-        model.addAttribute("orders", orderService.getAllByStatusName(statusName));
+        model.addAttribute(ORDERS, orderService.getAllByStatusName(statusName));
         return "admin/list_of_orders";
     }
 
@@ -46,10 +49,10 @@ public class AdminOrderController {
                 model.addAttribute("orderItems", orderItemService.getAllDtosByOrderId(orderDtoOptional.get().getId()));
                 return "admin/order";
             }
-            redirectAttributes.addFlashAttribute("message", "Замовлення №%s має інший статус!".formatted(id));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s має інший статус!".formatted(id));
             return "redirect:/admin/orders/{statusName}";
         }
-        redirectAttributes.addFlashAttribute("message", "Замовлення №%s не було знайдено!".formatted(id));
+        redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(id));
         return "redirect:/admin/orders/{statusName}";
     }
 
@@ -58,16 +61,16 @@ public class AdminOrderController {
                                     Model model, RedirectAttributes redirectAttributes) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
         if (orderDtoOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Замовлення №%s не було знайдено!".formatted(orderId));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(orderId));
             return "redirect:/orders";
         }
         var giftSetOptional = giftSetService.getEntityById(giftSetId);
         if (giftSetOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
             return "redirect:/orders";
         }
         if (orderItemService.getByOrderIdAndGiftSetId(orderId, giftSetId).isEmpty()) {
-            redirectAttributes.addFlashAttribute("message",
+            redirectAttributes.addFlashAttribute(MESSAGE,
                     "Подарунковий набір з id <%s> не належить до замовлення з id <%s>!".formatted(giftSetId, orderId));
             return "redirect:/orders";
         }
@@ -79,7 +82,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{id}/acceptOrderWithPickup")
-    public ResponseEntity<?> acceptOrderWithPickup(@PathVariable Long id, @RequestBody LocalDateTime receiptDate) {
+    public ResponseEntity<Void> acceptOrderWithPickup(@PathVariable Long id, @RequestBody LocalDateTime receiptDate) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty())
             return ResponseEntity.notFound().build();
@@ -94,7 +97,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{id}/acceptOrderWithDelivery")
-    public ResponseEntity<?> acceptOrderWithDelivery(@PathVariable Long id) {
+    public ResponseEntity<Void> acceptOrderWithDelivery(@PathVariable Long id) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty())
             return ResponseEntity.notFound().build();
@@ -108,7 +111,7 @@ public class AdminOrderController {
     }
 
     @DeleteMapping("/{id}/declineOrder")
-    public ResponseEntity<?> declineOrder(@PathVariable Long id) {
+    public ResponseEntity<Void> declineOrder(@PathVariable Long id) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty())
             return ResponseEntity.notFound().build();
@@ -121,7 +124,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{id}/markOrderAsForwardedForDelivery")
-    public ResponseEntity<?> markOrderAsForwardedForDelivery(@PathVariable Long id, @RequestBody Long invoiceNumber) {
+    public ResponseEntity<Void> markOrderAsForwardedForDelivery(@PathVariable Long id, @RequestBody Long invoiceNumber) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty())
             return ResponseEntity.notFound().build();
@@ -136,7 +139,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{id}/markOrderAsReceived")
-    public ResponseEntity<?> markOrderAsReceived(@PathVariable Long id) {
+    public ResponseEntity<Void> markOrderAsReceived(@PathVariable Long id) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty())
             return ResponseEntity.notFound().build();
@@ -160,9 +163,9 @@ public class AdminOrderController {
         }
         model.addAttribute("searchFlag", true);
         if (userPhone != null) {
-            model.addAttribute("orders", orderService.getAllByUserPhone(userPhone));
+            model.addAttribute(ORDERS, orderService.getAllByUserPhone(userPhone));
         } else {
-            model.addAttribute("orders", orderService.getById(orderId).stream().toList());
+            model.addAttribute(ORDERS, orderService.getById(orderId).stream().toList());
         }
         return "admin/find_orders";
     }

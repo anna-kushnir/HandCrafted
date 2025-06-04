@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         return favoriteProductRepository.findAllByUser(user)
                 .stream()
                 .map(favoriteProductMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -37,7 +36,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         return favoriteProductRepository.findAllByUser(user)
                 .stream()
                 .map(favoriteProductMapper::toGiftSetDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

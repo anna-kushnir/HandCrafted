@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.regex.Pattern;
 
+import static annak.hc.config.GlobalVariables.MESSAGE;
+
 @Controller
 @RequestMapping("/")
 @RequiredArgsConstructor
@@ -57,17 +59,17 @@ public class UserController {
     public String register(@ModelAttribute("user") NewUserDto newUserDto, Model model) {
         try {
             if (!newUserDto.getPassword().equals(newUserDto.getSubmitPassword())) {
-                throw new Exception("Паролі не співпадають");
+                throw new IllegalArgumentException("Паролі не співпадають");
             }
             Pattern passwordPattern = Pattern.compile("^(?=.*[A-ZА-ЯІЇЄ])(?=.*[a-zа-яіїє])(?=.*\\d)[A-Za-zА-Яа-яІіЇїЄє\\d]{8,16}$");
             if (!passwordPattern.matcher(newUserDto.getPassword()).matches()) {
-                throw new Exception("Пароль не відповідає шаблону");
+                throw new IllegalArgumentException("Пароль не відповідає шаблону");
             }
             newUserDto.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
             newUserDto.setSubmitPassword(passwordEncoder.encode(newUserDto.getSubmitPassword()));
             userService.save(newUserDto);
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            model.addAttribute(MESSAGE, e.getMessage());
             newUserDto.setPassword(null);
             newUserDto.setSubmitPassword(null);
             model.addAttribute("user", newUserDto);
@@ -117,7 +119,7 @@ public class UserController {
         userDto.setPassword(user.getPassword());
         userDto.setActive(true);
         var result = userService.update(userDto);
-        redirectAttributes.addFlashAttribute("message", result);
+        redirectAttributes.addFlashAttribute(MESSAGE, result);
         return "redirect:/editProfile";
     }
 
@@ -136,13 +138,13 @@ public class UserController {
             if (userPasswordDto.getNewPassword().equals(userPasswordDto.getSubmitNewPassword())) {
                 user.setPassword(passwordEncoder.encode(userPasswordDto.getNewPassword()));
                 var result = userService.update(user);
-                redirectAttributes.addFlashAttribute("message", result);
+                redirectAttributes.addFlashAttribute(MESSAGE, result);
                 return "redirect:/changePassword";
             }
-            redirectAttributes.addFlashAttribute("message", "Некоректне повторне введення нового паролю!");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Некоректне повторне введення нового паролю!");
             return "redirect:/changePassword";
         }
-        redirectAttributes.addFlashAttribute("message", "Поточний пароль не співпадає з вашим дійсним паролем!");
+        redirectAttributes.addFlashAttribute(MESSAGE, "Поточний пароль не співпадає з вашим дійсним паролем!");
         return "redirect:/changePassword";
     }
 }

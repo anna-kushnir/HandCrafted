@@ -55,14 +55,18 @@ public class AdminCategoryController {
     }
 
     @PostMapping("/{id}")
-    public String editCategory(@ModelAttribute("category") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+    public String editCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+        if (!categoryDto.getId().equals(id)) {
+            redirectAttributes.addFlashAttribute("message", "Некоректне вказання id категорії для редагування");
+            return "redirect:/admin/categories";
+        }
         var result = categoryService.update(categoryDto);
         redirectAttributes.addFlashAttribute("message", result);
         return "redirect:/admin/categories";
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<?> deleteCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategoryById(@PathVariable Long id) {
         categoryService.deleteById(id);
         return ResponseEntity.ok().build();
     }

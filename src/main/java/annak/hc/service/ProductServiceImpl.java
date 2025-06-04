@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllByDeletedIsFalse()
                 .stream()
                 .map(productMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -111,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
 
         return productList.stream()
                 .map(productMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -119,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllByCategoryIdAndDeletedIsFalse(categoryId)
                 .stream()
                 .map(productMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -133,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
         return products
                 .stream()
                 .map(productMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
