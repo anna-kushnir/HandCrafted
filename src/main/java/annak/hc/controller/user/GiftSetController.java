@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+import static annak.hc.config.GlobalVariables.PRODUCTS;
+import static annak.hc.config.GlobalVariables.TOTAL_PRICE;
+
 @Controller
 @RequestMapping("/giftSets")
 @RequiredArgsConstructor
@@ -29,8 +32,8 @@ public class GiftSetController {
     public String getCreateGiftSetView(Principal principal, Model model) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         var productToGiftSetDtoList = favoriteProductService.getAllForGiftSetByUser(user);
-        model.addAttribute("products", productToGiftSetDtoList);
-        model.addAttribute("totalPrice", 0);
+        model.addAttribute(PRODUCTS, productToGiftSetDtoList);
+        model.addAttribute(TOTAL_PRICE, 0);
         return "user/create_gift_set";
     }
 

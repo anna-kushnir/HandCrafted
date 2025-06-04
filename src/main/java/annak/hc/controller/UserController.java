@@ -27,6 +27,8 @@ import static annak.hc.config.GlobalVariables.MESSAGE;
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final String REDIRECT_CHANGE_PASSWORD = "redirect:/changePassword";
+
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
@@ -139,12 +141,12 @@ public class UserController {
                 user.setPassword(passwordEncoder.encode(userPasswordDto.getNewPassword()));
                 var result = userService.update(user);
                 redirectAttributes.addFlashAttribute(MESSAGE, result);
-                return "redirect:/changePassword";
+                return REDIRECT_CHANGE_PASSWORD;
             }
             redirectAttributes.addFlashAttribute(MESSAGE, "Некоректне повторне введення нового паролю!");
-            return "redirect:/changePassword";
+            return REDIRECT_CHANGE_PASSWORD;
         }
         redirectAttributes.addFlashAttribute(MESSAGE, "Поточний пароль не співпадає з вашим дійсним паролем!");
-        return "redirect:/changePassword";
+        return REDIRECT_CHANGE_PASSWORD;
     }
 }

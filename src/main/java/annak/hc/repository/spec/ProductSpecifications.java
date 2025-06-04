@@ -10,11 +10,12 @@ import java.util.Set;
 
 public class ProductSpecifications {
 
+    private ProductSpecifications() {
+        throw new IllegalStateException("Не можна створити екземпляр класу ProductSpecifications");
+    }
+
     public static Specification<Product> hasColorIn(Set<Color> colors) {
-        return (root, query, cb) ->
-                colors == null || colors.isEmpty() ?
-                        null :
-                        root.join("colors").in(colors);
+        return (root, query, cb) -> root.join("colors").in(colors);
     }
 
     public static Specification<Product> priceBetween(BigDecimal priceFrom, BigDecimal priceTo) {

@@ -17,6 +17,8 @@ import static annak.hc.config.GlobalVariables.*;
 @RequiredArgsConstructor
 public class AdminProductController {
 
+    private static final String REDIRECT_ADMIN_PRODUCTS = "redirect:/admin/products";
+
     private final ProductService productService;
     private final CategoryService categoryService;
 
@@ -45,12 +47,12 @@ public class AdminProductController {
     public String addProduct(@RequestBody ProductDto productDto, RedirectAttributes redirectAttributes) {
         if (productDto.getId() != null) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Id нового товару має бути порожнім!");
-            return "redirect:/admin/products";
+            return REDIRECT_ADMIN_PRODUCTS;
         }
         productDto.setCategory(categoryService.getEntityById(productDto.getCategoryId()));
         productService.save(productDto);
         redirectAttributes.addFlashAttribute(MESSAGE, "Товар успішно додано");
-        return "redirect:/admin/products";
+        return REDIRECT_ADMIN_PRODUCTS;
     }
 
     @GetMapping("/{id}/edit")
@@ -58,7 +60,7 @@ public class AdminProductController {
         var productDtoOptional = productService.getNotDeletedById(id);
         if (productDtoOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Товар з id <%s> не було знайдено".formatted(id));
-            return "redirect:/admin/products";
+            return REDIRECT_ADMIN_PRODUCTS;
         }
         model.addAttribute("oldProduct", productDtoOptional.get());
         model.addAttribute(CATEGORIES, categoryService.getAll());

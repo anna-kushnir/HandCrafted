@@ -14,13 +14,15 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
-import static annak.hc.config.GlobalVariables.IS_AUTHENTICATED;
-import static annak.hc.config.GlobalVariables.MESSAGE;
+import static annak.hc.config.GlobalVariables.*;
 
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
+
+    private static final String REDIRECT_PRODUCTS = "redirect:/products";
+    private static final String REDIRECT_PRODUCTS_BY_ID = "redirect:/products/{id}";
 
     private final ProductService productService;
     private final CategoryService categoryService;
@@ -41,13 +43,13 @@ public class ProductController {
                                  @RequestParam(name = "search", required = false) String search,
                                  @RequestParam(name = "colorIds", required = false) List<Long> colorIds
     ) {
-        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute(CATEGORIES, categoryService.getAll());
         model.addAttribute("colors", colorService.getAll());
         model.addAttribute("categoryWasChosen", categoryId != 0);
         if (search != null) {
-            model.addAttribute("products", productService.getAllNotDeletedBySearchLine(categoryId, search));
+            model.addAttribute(PRODUCTS, productService.getAllNotDeletedBySearchLine(categoryId, search));
         } else {
-            model.addAttribute("products",
+            model.addAttribute(PRODUCTS,
                     productService.getAllNotDeletedByFilter(categoryId, sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc, priceFrom, priceTo, colorIds));
         }
         model.addAttribute(IS_AUTHENTICATED, principal != null);
@@ -59,7 +61,7 @@ public class ProductController {
         var productDtoOptional = productService.getNotDeletedById(id);
         if (productDtoOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Товар з id <%s> не було знайдено".formatted(id));
-            return "redirect:/products";
+            return REDIRECT_PRODUCTS;
         }
         var productDto = productDtoOptional.get();
         model.addAttribute("product", productDto);
@@ -80,7 +82,7 @@ public class ProductController {
     public String addProductWithIdToFavorites(Principal principal, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (principal == null) {
             redirectAttributes.addFlashAttribute("msgAddToFavorites", "Щоб додати товар до вподобаного, вам необхідно зареєструватися");
-            return "redirect:/products/{id}";
+            return REDIRECT_PRODUCTS_BY_ID;
         }
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         var productDtoOptional = productService.getNotDeletedById(id);
@@ -88,16 +90,16 @@ public class ProductController {
             var productDto = productDtoOptional.get();
             var result = favoriteProductService.saveOrDeleteIfExists(user, productDto);
             redirectAttributes.addFlashAttribute("msgAddToFavorites", result);
-            return "redirect:/products/{id}";
+            return REDIRECT_PRODUCTS_BY_ID;
         } else {
-            return "redirect:/products";
+            return REDIRECT_PRODUCTS;
         }
     }
 
     @PostMapping("/{id}/addToCart")
     public String addProductWithIdToCart(Principal principal, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (principal == null) {
-            return "redirect:/products/{id}";
+            return REDIRECT_PRODUCTS_BY_ID;
         }
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         var productDtoOptional = productService.getNotDeletedById(id);
@@ -105,9 +107,9 @@ public class ProductController {
             var productDto = productDtoOptional.get();
             var result = cartItemService.saveOrDeleteIfExists(user, productDto);
             redirectAttributes.addFlashAttribute("msgAddToCart", result);
-            return "redirect:/products/{id}";
+            return REDIRECT_PRODUCTS_BY_ID;
         } else {
-            return "redirect:/products";
+            return REDIRECT_PRODUCTS;
         }
     }
 }

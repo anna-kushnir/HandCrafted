@@ -22,13 +22,15 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-import static annak.hc.config.GlobalVariables.MESSAGE;
-import static annak.hc.config.GlobalVariables.ORDERS;
+import static annak.hc.config.GlobalVariables.*;
 
 @Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
+
+    private static final String REDIRECT_ORDERS = "redirect:/orders";
+    private static final String REDIRECT_CART = "redirect:/cart";
 
     private final UserDetailsService userDetailsService;
     private final OrderService orderService;
@@ -50,14 +52,14 @@ public class OrderController {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(id));
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         }
         OrderDto orderDto = orderDtoOptional.get();
         if (!user.equals(orderDto.getUser())) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Ви можете переглянути лише свої власні замовлення!");
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         }
-        model.addAttribute("order", orderDto);
+        model.addAttribute(ORDER, orderDto);
         model.addAttribute("orderItems", orderItemService.getAllDtosByOrderId(orderDto.getId()));
         return "user/order";
     }
@@ -69,27 +71,27 @@ public class OrderController {
         Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
         if (orderDtoOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(orderId));
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         }
         OrderDto orderDto = orderDtoOptional.get();
         if (!user.equals(orderDto.getUser())) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Ви можете переглянути лише свої власні замовлення!");
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         }
         var giftSetOptional = giftSetService.getEntityById(giftSetId);
         if (giftSetOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         }
         if (orderItemService.getByOrderIdAndGiftSetId(orderId, giftSetId).isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     "Подарунковий набір з id <%s> не належить до замовлення з id <%s>!".formatted(giftSetId, orderId));
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         }
         var giftSet = giftSetOptional.get();
         model.addAttribute("giftSet", giftSet);
         model.addAttribute("items", giftSet.getItems());
-        model.addAttribute("totalPrice", giftSet.getPrice());
+        model.addAttribute(TOTAL_PRICE, giftSet.getPrice());
         return "gift_set";
     }
 
@@ -98,7 +100,7 @@ public class OrderController {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         List<CartItemDto> cartItemDtoList = cartItemService.getAllByUser(user);
         model.addAttribute("cartItems", cartItemDtoList);
-        model.addAttribute("totalPrice", cartItemService.getTotalPriceOfItemsInCart(cartItemDtoList));
+        model.addAttribute(TOTAL_PRICE, cartItemService.getTotalPriceOfItemsInCart(cartItemDtoList));
         return "user/create_order";
     }
 
@@ -107,7 +109,7 @@ public class OrderController {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         NewOrderDto orderDto = new NewOrderDto();
         orderDto.setUserPhone(user.getUserPhone());
-        model.addAttribute("order", orderDto);
+        model.addAttribute(ORDER, orderDto);
         model.addAttribute("typesOfReceipt", TypeOfReceipt.values());
         return "user/fill_order_data";
     }
@@ -119,10 +121,10 @@ public class OrderController {
         try {
             String result = orderService.save(newOrderDto, cartItemService.getAllByUser(user));
             redirectAttributes.addFlashAttribute(MESSAGE, result);
-            return "redirect:/orders";
+            return REDIRECT_ORDERS;
         } catch (ResourceNotFoundException e) {
             redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-            return "redirect:/cart";
+            return REDIRECT_CART;
         }
     }
 

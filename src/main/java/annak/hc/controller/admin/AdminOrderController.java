@@ -15,13 +15,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static annak.hc.config.GlobalVariables.MESSAGE;
-import static annak.hc.config.GlobalVariables.ORDERS;
+import static annak.hc.config.GlobalVariables.*;
 
 @Controller
 @RequestMapping("/admin/orders")
 @RequiredArgsConstructor
 public class AdminOrderController {
+
+    private static final String REDIRECT_ADMIN_ORDERS = "redirect:/admin/orders";
+    private static final String REDIRECT_ADMIN_ORDERS_BY_STATUS = "redirect:/admin/orders/{statusName}";
 
     private final OrderService orderService;
     private final OrderItemService orderItemService;
@@ -45,15 +47,15 @@ public class AdminOrderController {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isPresent()) {
             if (orderDtoOptional.get().getStatus().equals(Status.valueOf(statusName.toUpperCase()))) {
-                model.addAttribute("order", orderDtoOptional.get());
+                model.addAttribute(ORDER, orderDtoOptional.get());
                 model.addAttribute("orderItems", orderItemService.getAllDtosByOrderId(orderDtoOptional.get().getId()));
                 return "admin/order";
             }
             redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s має інший статус!".formatted(id));
-            return "redirect:/admin/orders/{statusName}";
+            return REDIRECT_ADMIN_ORDERS_BY_STATUS;
         }
         redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(id));
-        return "redirect:/admin/orders/{statusName}";
+        return REDIRECT_ADMIN_ORDERS_BY_STATUS;
     }
 
     @GetMapping("/{orderId}/giftSets/{giftSetId}")
@@ -62,22 +64,22 @@ public class AdminOrderController {
         Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
         if (orderDtoOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s не було знайдено!".formatted(orderId));
-            return "redirect:/orders";
+            return REDIRECT_ADMIN_ORDERS;
         }
         var giftSetOptional = giftSetService.getEntityById(giftSetId);
         if (giftSetOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Подарунковий набір з id <%s> не знайдено!".formatted(giftSetId));
-            return "redirect:/orders";
+            return REDIRECT_ADMIN_ORDERS;
         }
         if (orderItemService.getByOrderIdAndGiftSetId(orderId, giftSetId).isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     "Подарунковий набір з id <%s> не належить до замовлення з id <%s>!".formatted(giftSetId, orderId));
-            return "redirect:/orders";
+            return REDIRECT_ADMIN_ORDERS;
         }
         var giftSet = giftSetOptional.get();
         model.addAttribute("giftSet", giftSet);
         model.addAttribute("items", giftSet.getItems());
-        model.addAttribute("totalPrice", giftSet.getPrice());
+        model.addAttribute(TOTAL_PRICE, giftSet.getPrice());
         return "gift_set";
     }
 

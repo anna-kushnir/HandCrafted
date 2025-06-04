@@ -35,7 +35,7 @@
 <main class="container main-container">
     <form th:action="@{/admin/contacts}" th:object="${oldContacts}" method="POST" class="form-container">
         <div class="data-container">
-            <div th:if="${msgResult}" role="alert" th:text="${msgResult}" class="alert"></div>
+            <div th:if="${message}" role="alert" th:text="${message}" class="alert"></div>
 
             <div th:each="contact, iStat : *{shopContacts}" class="input-container">
                 <label th:for="'contact-' + ${iStat.index}" class="label">[[${contact.name.name}]]:</label>

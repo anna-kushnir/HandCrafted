@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import static annak.hc.config.GlobalVariables.MESSAGE;
+
 @Controller
 @RequestMapping("/admin/contacts")
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class AdminContactsController {
     public String editContacts(@ModelAttribute("oldContacts") ShopContactListDto shopContactListDto,
                                RedirectAttributes redirectAttributes) {
         String result = shopContactService.updateAll(shopContactListDto.getShopContacts());
-        redirectAttributes.addFlashAttribute("msgResult", result);
+        redirectAttributes.addFlashAttribute(MESSAGE, result);
         return "redirect:/admin/contacts";
     }
 }

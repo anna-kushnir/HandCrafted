@@ -18,10 +18,14 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static annak.hc.config.GlobalVariables.*;
+
 @Controller
 @RequestMapping("/cart")
 @RequiredArgsConstructor
 public class CartController {
+
+    private static final String REDIRECT_CART = "redirect:/cart";
 
     private final UserDetailsService userDetailsService;
     private final CartItemService cartItemService;
@@ -35,10 +39,10 @@ public class CartController {
             var user = (User) userDetailsService.loadUserByUsername(principal.getName());
             List<CartItemDto> cartItemDtoList = cartItemService.getAllByUser(user);
             model.addAttribute("cartItems", cartItemDtoList);
-            model.addAttribute("totalPrice", cartItemService.getTotalPriceOfItemsInCart(cartItemDtoList));
-            model.addAttribute("isAuthenticated", true);
+            model.addAttribute(TOTAL_PRICE, cartItemService.getTotalPriceOfItemsInCart(cartItemDtoList));
+            model.addAttribute(IS_AUTHENTICATED, true);
         } else {
-            model.addAttribute("isAuthenticated", false);
+            model.addAttribute(IS_AUTHENTICATED, false);
         }
         return "guest/cart";
     }
@@ -47,13 +51,13 @@ public class CartController {
     public String getGiftSetInCart(Principal principal, @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         var giftSetOptional = giftSetService.getEntityById(id);
         if (giftSetOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Подарунковий набір з id <%s> не знайдено!".formatted(id));
-            return "redirect:/cart";
+            redirectAttributes.addFlashAttribute(MESSAGE, "Подарунковий набір з id <%s> не знайдено!".formatted(id));
+            return REDIRECT_CART;
         }
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         if (cartItemService.getByUserAndGiftSetId(user, id).isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Ви можете переглянути лише власні подарункові набори!");
-            return "redirect:/cart";
+            redirectAttributes.addFlashAttribute(MESSAGE, "Ви можете переглянути лише власні подарункові набори!");
+            return REDIRECT_CART;
         }
         var giftSet = giftSetOptional.get();
         for (var giftSetItem : giftSet.getItems()) {
@@ -72,7 +76,6 @@ public class CartController {
     public List<CartItemDto> getGuestCartItems(@RequestBody List<GuestCartItemDto> items) {
         return cartItemService.convertGuestItemsToDto(items);
     }
-
 
     @PostMapping("/merge")
     public ResponseEntity<Void> mergeCart(Principal principal, @RequestBody List<GuestCartItemDto> guestCartItems) {
