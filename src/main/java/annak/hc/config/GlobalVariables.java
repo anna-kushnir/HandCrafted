@@ -10,9 +10,9 @@ public class GlobalVariables {
 
     public static final BigDecimal WRAP_PRICE = BigDecimal.valueOf(50);
 
-    public final static String MESSAGE = "message";
-    public final static String PRODUCTS = "products";
-    public final static String CATEGORIES = "categories";
-    public final static String ORDERS = "orders";
-    public final static String IS_AUTHENTICATED = "isAuthenticated";
+    public static final String MESSAGE = "message";
+    public static final String PRODUCTS = "products";
+    public static final String CATEGORIES = "categories";
+    public static final String ORDERS = "orders";
+    public static final String IS_AUTHENTICATED = "isAuthenticated";
 }

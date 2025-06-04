@@ -9,6 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import static annak.hc.config.GlobalVariables.CATEGORIES;
+import static annak.hc.config.GlobalVariables.MESSAGE;
+
 @Controller
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
@@ -18,7 +21,7 @@ public class AdminCategoryController {
 
     @GetMapping
     public String getAllCategories(Model model) {
-        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute(CATEGORIES, categoryService.getAll());
         return "admin/list_of_categories";
     }
 
@@ -31,11 +34,11 @@ public class AdminCategoryController {
     @PostMapping
     public String addCategory(@ModelAttribute("category") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
         if (categoryDto.getId() != null) {
-            redirectAttributes.addFlashAttribute("message", "Id нової категорії має бути порожнім!");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Id нової категорії має бути порожнім!");
             return "redirect:/admin/categories";
         }
         categoryService.save(categoryDto);
-        redirectAttributes.addFlashAttribute("message", "Категорію успішно додано");
+        redirectAttributes.addFlashAttribute(MESSAGE, "Категорію успішно додано");
         return "redirect:/admin/categories";
     }
 
@@ -43,7 +46,7 @@ public class AdminCategoryController {
     public String getCategoryToEditById(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         var categoryDtoOptional = categoryService.getById(id);
         if (categoryDtoOptional.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Категорію з id <%s> не було знайдено".formatted(id));
+            redirectAttributes.addFlashAttribute(MESSAGE, "Категорію з id <%s> не було знайдено".formatted(id));
             return "redirect:/admin/categories";
         }
         var categoryDto = categoryDtoOptional.get();
@@ -57,11 +60,11 @@ public class AdminCategoryController {
     @PostMapping("/{id}")
     public String editCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
         if (!categoryDto.getId().equals(id)) {
-            redirectAttributes.addFlashAttribute("message", "Некоректне вказання id категорії для редагування");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Некоректне вказання id категорії для редагування");
             return "redirect:/admin/categories";
         }
         var result = categoryService.update(categoryDto);
-        redirectAttributes.addFlashAttribute("message", result);
+        redirectAttributes.addFlashAttribute(MESSAGE, result);
         return "redirect:/admin/categories";
     }
 
