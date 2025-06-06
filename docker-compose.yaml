@@ -19,7 +19,6 @@ services:
 
   app:
     build: .
-#    image: 'handcrafted-app'
     container_name: 'app_handcrafted'
     restart: 'always'
     ports:
