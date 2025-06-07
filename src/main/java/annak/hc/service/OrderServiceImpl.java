@@ -83,7 +83,8 @@ public class OrderServiceImpl implements OrderService {
         for (CartItemDto cartItemDto : cartItemDtoList) {
             Optional<CartItem> cartItemOptional = cartItemService.getById(cartItemDto.getId());
             if (cartItemOptional.isEmpty()) {
-                throw new ResourceNotFoundException("В кошику під id <%s> нічого не знайдено!".formatted(cartItemDto.getId()));
+                throw new ResourceNotFoundException("В кошику під id <%s> нічого не знайдено!"
+                        .formatted(cartItemDto.getId()));
             }
 
             if (cartItemDto.isGiftSet()) {
@@ -106,9 +107,12 @@ public class OrderServiceImpl implements OrderService {
 
     private void saveGiftSetInOrder(CartItemDto cartItemDto, Order order, CartItem cartItem) {
         for (var giftSetItem : giftSetItemService.getAllByGiftSetId(cartItemDto.getGiftSetId())) {
-            ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(giftSetItem.getProduct().getId(), giftSetItem.getQuantity());
+            ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(
+                    giftSetItem.getProduct().getId(),
+                    giftSetItem.getQuantity());
             if (giftSetItem.getQuantity() > productDto.getMaxQuantityInGiftSet()) {
-                throw new ResourceNotFoundException("В подарунковий набір не можна додати таку кількість товару з id <%s>!".formatted(productDto.getId()));
+                throw new ResourceNotFoundException("В подарунковий набір не можна додати таку кількість товару з id <%s>!"
+                        .formatted(productDto.getId()));
             }
             productDto.setQuantity(productDto.getQuantity() - giftSetItem.getQuantity());
             productDto.setInStock(productDto.getQuantity() != 0);
@@ -119,7 +123,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void saveProductInOrder(CartItemDto cartItemDto, Order order, CartItem cartItem) {
-        ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(cartItemDto.getProductId(), cartItemDto.getQuantityInCart());
+        ProductDto productDto = getProductDtoAndCheckQuantityOrElseThrow(
+                cartItemDto.getProductId(),
+                cartItemDto.getQuantityInCart());
         orderItemService.save(order, cartItem);
         cartItemService.deleteById(cartItemDto.getId());
         productDto.setQuantity(productDto.getQuantity() - cartItemDto.getQuantityInCart());
@@ -134,7 +140,8 @@ public class OrderServiceImpl implements OrderService {
         }
         var productDto = productDtoOptional.get();
         if (itemQuantity > productDto.getQuantity()) {
-            throw new ResourceNotFoundException("Недостатньо товару \"%s\" (id=%s)!".formatted(productDto.getName(), productDto.getId()));
+            throw new ResourceNotFoundException("Недостатньо товару \"%s\" (id=%s)!"
+                    .formatted(productDto.getName(), productDto.getId()));
         }
         return productDto;
     }

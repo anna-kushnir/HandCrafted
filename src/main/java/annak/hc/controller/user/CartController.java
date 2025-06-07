@@ -48,7 +48,8 @@ public class CartController {
     }
 
     @GetMapping("/giftSets/{id}")
-    public String getGiftSetInCart(Principal principal, @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String getGiftSetInCart(Principal principal, @PathVariable Long id,
+                                   Model model, RedirectAttributes redirectAttributes) {
         var giftSetOptional = giftSetService.getEntityById(id);
         if (giftSetOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Подарунковий набір з id <%s> не знайдено!".formatted(id));
@@ -125,7 +126,8 @@ public class CartController {
     }
 
     @PutMapping ("/products/{id}/updateQuantity/{quantity}")
-    public ResponseEntity<Void> updateQuantity(Principal principal, @PathVariable Long id, @PathVariable Long quantity) {
+    public ResponseEntity<Void> updateQuantity(Principal principal, @PathVariable Long id,
+                                               @PathVariable Long quantity) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<ProductDto> productDtoOptional = productService.getById(id);
         if (productDtoOptional.isPresent()) {

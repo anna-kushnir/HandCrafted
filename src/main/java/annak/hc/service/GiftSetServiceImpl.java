@@ -97,11 +97,6 @@ public class GiftSetServiceImpl implements GiftSetService {
     }
 
     @Override
-    public GiftSet update(GiftSet giftSet) {
-        return giftSetRepository.save(giftSet);
-    }
-
-    @Override
     @Transactional
     public void deleteById(Long giftSetId) {
         giftSetItemService.deleteAllByGiftSetId(giftSetId);

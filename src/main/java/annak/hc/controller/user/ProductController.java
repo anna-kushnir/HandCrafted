@@ -50,14 +50,17 @@ public class ProductController {
             model.addAttribute(PRODUCTS, productService.getAllNotDeletedBySearchLine(categoryId, search));
         } else {
             model.addAttribute(PRODUCTS,
-                    productService.getAllNotDeletedByFilter(categoryId, sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc, priceFrom, priceTo, colorIds));
+                    productService.getAllNotDeletedByFilter(categoryId,
+                            sortByCost, sortByCostAsc, sortByNewness, sortByNewnessAsc,
+                            priceFrom, priceTo, colorIds));
         }
         model.addAttribute(IS_AUTHENTICATED, principal != null);
         return "guest/list_of_products";
     }
 
     @GetMapping("/{id}")
-    public String getProductById(Principal principal, @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String getProductById(Principal principal, @PathVariable Long id,
+                                 Model model, RedirectAttributes redirectAttributes) {
         var productDtoOptional = productService.getNotDeletedById(id);
         if (productDtoOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Товар з id <%s> не було знайдено".formatted(id));
@@ -79,9 +82,11 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/addToFavorites")
-    public String addProductWithIdToFavorites(Principal principal, @PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String addProductWithIdToFavorites(Principal principal, @PathVariable Long id,
+                                              RedirectAttributes redirectAttributes) {
         if (principal == null) {
-            redirectAttributes.addFlashAttribute("msgAddToFavorites", "Щоб додати товар до вподобаного, вам необхідно зареєструватися");
+            redirectAttributes.addFlashAttribute("msgAddToFavorites",
+                    "Щоб додати товар до вподобаного, вам необхідно зареєструватися");
             return REDIRECT_PRODUCTS_BY_ID;
         }
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
@@ -97,7 +102,8 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/addToCart")
-    public String addProductWithIdToCart(Principal principal, @PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String addProductWithIdToCart(Principal principal, @PathVariable Long id,
+                                         RedirectAttributes redirectAttributes) {
         if (principal == null) {
             return REDIRECT_PRODUCTS_BY_ID;
         }

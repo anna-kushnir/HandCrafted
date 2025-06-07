@@ -33,7 +33,8 @@ public class AdminCategoryController {
     }
 
     @PostMapping
-    public String addCategory(@ModelAttribute("category") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+    public String addCategory(@ModelAttribute(CATEGORY) CategoryDto categoryDto,
+                              RedirectAttributes redirectAttributes) {
         if (categoryDto.getId() != null) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Id нової категорії має бути порожнім!");
             return REDIRECT_ADMIN_CATEGORIES;
@@ -59,7 +60,9 @@ public class AdminCategoryController {
     }
 
     @PostMapping("/{id}")
-    public String editCategory(@PathVariable Long id, @ModelAttribute(CATEGORY) CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+    public String editCategory(@PathVariable Long id,
+                               @ModelAttribute(CATEGORY) CategoryDto categoryDto,
+                               RedirectAttributes redirectAttributes) {
         if (!categoryDto.getId().equals(id)) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Некоректне вказання id категорії для редагування");
             return REDIRECT_ADMIN_CATEGORIES;

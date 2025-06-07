@@ -47,7 +47,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public String getOrderById(@PathVariable Long id, Principal principal, Model model, RedirectAttributes redirectAttributes) {
+    public String getOrderById(@PathVariable Long id, Principal principal,
+                               Model model, RedirectAttributes redirectAttributes) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isEmpty()) {
@@ -65,8 +66,9 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}/giftSets/{giftSetId}")
-    public String getGiftSetInOrder(Principal principal, @PathVariable Long orderId, @PathVariable Long giftSetId,
-                                    Model model, RedirectAttributes redirectAttributes) {
+    public String getGiftSetInOrder(Principal principal, @PathVariable Long orderId,
+                                    @PathVariable Long giftSetId, Model model,
+                                    RedirectAttributes redirectAttributes) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         Optional<OrderDto> orderDtoOptional = orderService.getById(orderId);
         if (orderDtoOptional.isEmpty()) {
@@ -115,7 +117,9 @@ public class OrderController {
     }
 
     @PostMapping("/new")
-    public String createOrder(Principal principal, @ModelAttribute("order") NewOrderDto newOrderDto, RedirectAttributes redirectAttributes) {
+    public String createOrder(Principal principal,
+                              @ModelAttribute("order") NewOrderDto newOrderDto,
+                              RedirectAttributes redirectAttributes) {
         var user = (User) userDetailsService.loadUserByUsername(principal.getName());
         newOrderDto.setUser(user);
         try {

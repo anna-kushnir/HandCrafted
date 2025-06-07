@@ -63,7 +63,8 @@ public class UserController {
             if (!newUserDto.getPassword().equals(newUserDto.getSubmitPassword())) {
                 throw new IllegalArgumentException("Паролі не співпадають");
             }
-            Pattern passwordPattern = Pattern.compile("^(?=.*[A-ZА-ЯІЇЄ])(?=.*[a-zа-яіїє])(?=.*\\d)[A-Za-zА-Яа-яІіЇїЄє\\d]{8,16}$");
+            Pattern passwordPattern = Pattern.compile(
+                    "^(?=.*[A-ZА-ЯІЇЄ])(?=.*[a-zа-яіїє])(?=.*\\d)[A-Za-zА-Яа-яІіЇїЄє\\d]{8,16}$");
             if (!passwordPattern.matcher(newUserDto.getPassword()).matches()) {
                 throw new IllegalArgumentException("Пароль не відповідає шаблону");
             }

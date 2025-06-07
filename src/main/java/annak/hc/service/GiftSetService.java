@@ -18,6 +18,5 @@ public interface GiftSetService {
     BigDecimal countTotalPriceForItems(List<GiftSetItem> items);
 
     GiftSet save(User user, NewGiftSetDto newGiftSetDto);
-    GiftSet update(GiftSet giftSet);
     void deleteById(Long giftSetId);
 }

@@ -43,12 +43,14 @@ public class AdminOrderController {
     }
 
     @GetMapping("/{statusName}/{id}")
-    public String getOrderById(@PathVariable String statusName, @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String getOrderById(@PathVariable String statusName, @PathVariable Long id,
+                               Model model, RedirectAttributes redirectAttributes) {
         Optional<OrderDto> orderDtoOptional = orderService.getById(id);
         if (orderDtoOptional.isPresent()) {
             if (orderDtoOptional.get().getStatus().equals(Status.valueOf(statusName.toUpperCase()))) {
                 model.addAttribute(ORDER, orderDtoOptional.get());
-                model.addAttribute("orderItems", orderItemService.getAllDtosByOrderId(orderDtoOptional.get().getId()));
+                model.addAttribute("orderItems",
+                        orderItemService.getAllDtosByOrderId(orderDtoOptional.get().getId()));
                 return "admin/order";
             }
             redirectAttributes.addFlashAttribute(MESSAGE, "Замовлення №%s має інший статус!".formatted(id));
